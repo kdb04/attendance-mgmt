@@ -219,3 +219,69 @@ UNLOCK TABLES;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
 -- Dump completed on 2025-03-16 18:47:19
+
+
+-- Insert into Courses
+INSERT INTO Courses (course_code, course_name, credits) VALUES
+('CS101', 'Introduction to Programming', 5),
+('CS102', 'Mathematics for CS', 4),
+('CS201', 'Data Structures', 5),
+('CS202', 'Database Management', 4),
+('CS203', 'Computer Networks', 4),
+('CS301', 'Operating Systems', 5),
+('CS302', 'Artificial Intelligence', 4),
+('CS303', 'Machine Learning', 4),
+('CS304', 'Cybersecurity', 4),
+('CS305', 'Cloud Computing', 4);
+
+-- Insert into Teachers
+INSERT INTO Teachers (trn, name) VALUES
+('TRN001', 'Dr. Adams'),
+('TRN002', 'Prof. Baker'),
+('TRN003', 'Dr. Carter'),
+('TRN004', 'Prof. Davis'),
+('TRN005', 'Dr. Evans'),
+('TRN006', 'Prof. Foster'),
+('TRN007', 'Dr. Green'),
+('TRN008', 'Prof. Harris'),
+('TRN009', 'Dr. Johnson'),
+('TRN010', 'Prof. King');
+
+-- Insert into TeacherAssignments
+INSERT INTO TeacherAssignments (trn, course_code) VALUES
+('TRN001', 'CS101'),
+('TRN002', 'CS102'),
+('TRN003', 'CS201'),
+('TRN004', 'CS202'),
+('TRN005', 'CS203'),
+('TRN006', 'CS301'),
+('TRN007', 'CS302'),
+('TRN008', 'CS303'),
+('TRN009', 'CS304'),
+('TRN010', 'CS305');
+
+-- Insert into Students
+INSERT INTO Students (srn, name, year_of_study) VALUES
+('PES2UG22CS125', 'Alice Johnson', 3),
+('PES2UG22CS302', 'Bob Smith', 3),
+('PES2UG22CS478', 'Charlie Davis', 3),
+('PES2UG22CS589', 'David Williams', 3),
+('PES2UG22CS642', 'Eva Brown', 3),
+('PES2UG23CS011', 'Frank Miller', 2),
+('PES2UG23CS237', 'Grace Wilson', 2),
+('PES2UG23CS389', 'Henry Moore', 2),
+('PES2UG24CS053', 'Ivy Taylor', 1),
+('PES2UG24CS194', 'Jack Anderson', 1);
+
+-- Insert into StudentEnrollments
+INSERT INTO StudentEnrollments (srn, course_code, enrollment_date) VALUES
+('PES2UG22CS125', 'CS301', CURRENT_DATE()),
+('PES2UG22CS302', 'CS302', CURRENT_DATE()),
+('PES2UG22CS478', 'CS303', CURRENT_DATE()),
+('PES2UG22CS589', 'CS304', CURRENT_DATE()),
+('PES2UG22CS642', 'CS305', CURRENT_DATE()),
+('PES2UG23CS011', 'CS201', CURRENT_DATE()),
+('PES2UG23CS237', 'CS202', CURRENT_DATE()),
+('PES2UG23CS389', 'CS203', CURRENT_DATE()),
+('PES2UG24CS053', 'CS101', CURRENT_DATE()),
+('PES2UG24CS194', 'CS102', CURRENT_DATE());
