@@ -1,4 +1,4 @@
-/*M!999999\- enable the sandbox mode */ 
+/*M!999999\- enable the sandbox mode */
 -- MariaDB dump 10.19-11.7.2-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: ooad
@@ -285,3 +285,25 @@ INSERT INTO StudentEnrollments (srn, course_code, enrollment_date) VALUES
 ('PES2UG23CS389', 'CS203', CURRENT_DATE()),
 ('PES2UG24CS053', 'CS101', CURRENT_DATE()),
 ('PES2UG24CS194', 'CS102', CURRENT_DATE());
+
+--Create role Admin
+CREATE USER "Admin"@"localhost" IDENTIFIED BY "admin123#";
+GRANT ALL PRIVILEGES ON ooad.* TO "Admin"@"localhost";
+
+--Create role Teacher
+CREATE USER "Teacher"@"localhost" IDENTIFIED BY "teacher123#";
+GRANT ALL PRIVILEGES ON ooad.Attendance TO "Teacher"@"localhost";
+GRANT ALL PRIVILEGES ON ooad.ClassSessions TO "Teacher"@"localhost";
+GRANT SELECT ON ooad.TeacherAssignments TO "Teacher"@"localhost";
+GRANT SELECT ON ooad.Teachers to "Teacher"@"localhost";
+GRANT SELECT ON ooad.Students TO "Teacher"@"localhost";
+GRANT SELECT ON ooad.Courses TO "Teacher"@"localhost";
+
+--Create role Student
+CREATE USER "Student"@"localhost" IDENTIFIED BY "student123#";
+GRANT SELECT ON ooad.Attendance TO "Student"@"localhost";
+GRANT SELECT ON ooad.Courses TO "Student"@"localhost";
+GRANT SELECT ON ooad.ClassSessions TO "Student"@"localhost";
+GRANT SELECT ON ooad.Students TO "Student"@"localhost";
+GRANT SELECT ON ooad.StudentEnrollments TO "Student"@"localhost";
+
