@@ -1,13 +1,14 @@
-import { useState } from 'react'
-import './Login.css'
+import { useState } from "react"
+import "./Login.css"
+import { Link } from "react-router-dom"
 
 function Login() {
     const [formData, setFormData] = useState({
-        username: '',
-        password: ''
+        username: "",
+        password: ""
     })
-  
-    const [error, setError] = useState('')
+
+    const [error, setError] = useState("")
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -16,7 +17,7 @@ function Login() {
         [name]: value
         }))
         // Clear error when user starts typing
-        if (error) setError('')
+        if (error) setError("")
     }
 
     const handleSubmit = (e) => {
@@ -44,6 +45,9 @@ function Login() {
             </div>
             {error && <div className="error-message">{error}</div>}
             <button type="submit" className="login-button">Login</button>
+            <div className="signup-link">
+                Don't have an account?<Link to="/signup">Sign-Up</Link>
+            </div>
         </form>
       </div>
     </div>
