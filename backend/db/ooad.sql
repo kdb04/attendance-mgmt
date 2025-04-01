@@ -119,7 +119,7 @@ DROP TABLE IF EXISTS `StudentEnrollments`;
 CREATE TABLE `StudentEnrollments` (
   `srn` varchar(13) NOT NULL,
   `course_code` varchar(20) NOT NULL,
-  `enrollment_date` date DEFAULT curdate(),
+  `enrollment_date` date NOT NULL DEFAULT (CURRENT_DATE),
   PRIMARY KEY (`srn`,`course_code`),
   KEY `course_code` (`course_code`),
   CONSTRAINT `StudentEnrollments_ibfk_1` FOREIGN KEY (`srn`) REFERENCES `Students` (`srn`),
