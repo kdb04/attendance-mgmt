@@ -25,15 +25,11 @@ CREATE TRIGGER after_students_insert
 AFTER INSERT ON Students
 FOR EACH ROW
 BEGIN
-    -- Enroll each student in 5 courses
     INSERT INTO StudentEnrollments (srn, course_code)
-    SELECT NEW.srn, c.course_code
-    FROM Courses c
-    WHERE c.course_code NOT IN (
-        SELECT se.course_code
-        FROM StudentEnrollments se
-        WHERE se.srn = NEW.srn
-    );
+    SELECT NEW.srn, course_code
+    FROM Courses
+    ORDER BY RAND()
+    LIMIT LEAST((SELECT COUNT(*) FROM Courses), 5);
 END //
 DELIMITER ;
 
@@ -44,7 +40,7 @@ AFTER INSERT ON TeacherAssignments
 FOR EACH ROW
 BEGIN
     -- Create class sessions for the next 30 days with fixed time slots
-    INSERT IGNORE INTO ClassSessions (course_code, trn, session_date, start_time, end_time)
+    INSERT INTO ClassSessions (course_code, trn, session_date, start_time, end_time)
     WITH RECURSIVE dates AS (
         SELECT CURDATE() as date
         UNION ALL
@@ -71,7 +67,19 @@ BEGIN
             WHEN 6 THEN '15:00:00' -- Friday
         END as end_time
     FROM dates d
-    WHERE WEEKDAY(d.date) BETWEEN 0 AND 4;  -- Monday to Friday only
+    WHERE WEEKDAY(d.date) BETWEEN 0 AND 4
+    AND NOT EXISTS (
+        SELECT 1 FROM ClassSessions cs
+        WHERE cs.course_code = NEW.course_code
+        AND cs.session_date = d.date
+        AND cs.start_time = CASE DAYOFWEEK(d.date)
+            WHEN 2 THEN '09:00:00'
+            WHEN 3 THEN '11:00:00'
+            WHEN 4 THEN '14:00:00'
+            WHEN 5 THEN '10:00:00'
+            WHEN 6 THEN '13:00:00'
+        END
+    );
 END //
 DELIMITER ;
 
@@ -81,14 +89,17 @@ CREATE TRIGGER after_class_session
 AFTER INSERT ON ClassSessions
 FOR EACH ROW
 BEGIN
-    -- Record attendance for all students enrolled in the course
     INSERT INTO Attendance (session_id, srn, status, timestamp)
     SELECT
         NEW.session_id,
         se.srn,
-        'present' as status,
+        'absent' as status,
         NOW() as timestamp
     FROM StudentEnrollments se
-    WHERE se.course_code = NEW.course_code;
+    WHERE se.course_code = NEW.course_code
+    AND EXISTS (
+        SELECT 1 FROM Students s
+        WHERE s.srn = se.srn
+    );
 END //
 DELIMITER ;
