@@ -111,8 +111,8 @@ def generate_courses():
 if __name__ == "__main__":
     try:
         generate_teachers()
-        generate_students()
         generate_courses()
+        generate_students()
 
         print("Data insertion for Teachers, Students, and Courses completed successfully!")
     except Exception as e:

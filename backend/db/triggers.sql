@@ -19,17 +19,24 @@ BEGIN
 END //
 DELIMITER ;
 
--- Trigger to populate StudentEnrollments
+--Trigger to populate StudentEnrollments
 DELIMITER //
 CREATE TRIGGER after_students_insert
 AFTER INSERT ON Students
 FOR EACH ROW
 BEGIN
+    DECLARE course_limit INT;
+    SET course_limit = (SELECT LEAST(COUNT(*), 5) FROM Courses);
+
     INSERT INTO StudentEnrollments (srn, course_code)
-    SELECT NEW.srn, course_code
-    FROM Courses
+    SELECT NEW.srn, c.course_code
+    FROM Courses c
+    WHERE NOT EXISTS (
+        SELECT 1 FROM StudentEnrollments se
+        WHERE se.srn = NEW.srn AND se.course_code = c.course_code
+    )
     ORDER BY RAND()
-    LIMIT LEAST((SELECT COUNT(*) FROM Courses), 5);
+    LIMIT course_limit;
 END //
 DELIMITER ;
 
@@ -83,23 +90,21 @@ BEGIN
 END //
 DELIMITER ;
 
--- Trigger to populate Attendance
+
+--  Trigger to update Attendance
 DELIMITER //
-CREATE TRIGGER after_class_session
-AFTER INSERT ON ClassSessions
+CREATE TRIGGER after_student_enrollment
+AFTER INSERT ON StudentEnrollments
 FOR EACH ROW
 BEGIN
     INSERT INTO Attendance (session_id, srn, status, timestamp)
-    SELECT
-        NEW.session_id,
-        se.srn,
-        'absent' as status,
-        NOW() as timestamp
-    FROM StudentEnrollments se
-    WHERE se.course_code = NEW.course_code
-    AND EXISTS (
-        SELECT 1 FROM Students s
-        WHERE s.srn = se.srn
+    SELECT cs.session_id, NEW.srn, 'absent', NOW()
+    FROM ClassSessions cs
+    WHERE cs.course_code = NEW.course_code
+    AND NOT EXISTS (
+        SELECT 1 FROM Attendance a
+        WHERE a.session_id = cs.session_id AND a.srn = NEW.srn
     );
 END //
 DELIMITER ;
+
