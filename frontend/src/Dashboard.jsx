@@ -1,36 +1,73 @@
-import { useState } from "react"
-import "./Dashboard.css"
-import DashboardHeader from "./DashboardHeader"
-import DashboardSidebar from "./DashboardSidebar"
-import AttendanceOverview from "./AttendanceOverview"
-import AttendanceHistory from "./AttendanceHistory"
-import ProfileCard from "./ProfileCard"
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import api from './services/api'
+import './Dashboard.css'
 
 function Dashboard() {
-  return (
-    <div className="dashboard-container">
-      <DashboardSidebar />
-      <div className="dashboard-content">
-        <DashboardHeader />
-        <main className="dashboard-main">
-          <h1 className="dashboard-title">Student Dashboard</h1>
-          
-          <div className="overview-grid">
-            <AttendanceOverview />
-          </div>
-          
-          <div className="dashboard-grid">
-            <div className="dashboard-grid-main">
-              <AttendanceHistory />
-            </div>
-            <div className="dashboard-grid-side">
-              <ProfileCard />
-            </div>
-          </div>
-        </main>
-      </div>
-    </div>
-  )
+    const [userData, setUserData] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const userId = localStorage.getItem('userId')
+        const role = localStorage.getItem('role')
+        const name = localStorage.getItem('name')
+
+        if (!userId || !role) {
+            navigate('/')
+            return
+        }
+
+        setUserData({ userId, role, name })
+        setLoading(false)
+    }, [navigate])
+
+    const handleLogout = () => {
+        localStorage.clear()
+        navigate('/')
+    }
+
+    if (loading) {
+        return <div className="loading">Loading...</div>
+    }
+
+    return (
+        <div className="dashboard-container">
+            <header className="dashboard-header">
+                <div className="user-info">
+                    <h1>{userData?.role.toLowerCase()} Dashboard</h1>
+                    <p>Welcome, {userData?.name}</p>
+                    <p>ID: {userData?.userId}</p>
+                </div>
+                <button onClick={handleLogout} className="logout-btn">
+                    Logout
+                </button>
+            </header>
+
+            <main className="dashboard-content">
+                {userData?.role === 'STUDENT' && (
+                    <div className="student-content">
+                        <h2>Your Courses</h2>
+                        <p>Course list will appear here</p>
+                    </div>
+                )}
+
+                {userData?.role === 'TEACHER' && (
+                    <div className="teacher-content">
+                        <h2>Your Classes</h2>
+                        <p>Class list will appear here</p>
+                    </div>
+                )}
+
+                {userData?.role === 'ADMIN' && (
+                    <div className="admin-content">
+                        <h2>System Overview</h2>
+                        <p>Admin controls will appear here</p>
+                    </div>
+                )}
+            </main>
+        </div>
+    )
 }
 
 export default Dashboard
