@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import StudentDashboard from './StudentDashboard'
 import api from './services/api'
 import './Dashboard.css'
 
@@ -46,10 +47,7 @@ function Dashboard() {
 
             <main className="dashboard-content">
                 {userData?.role === 'STUDENT' && (
-                    <div className="student-content">
-                        <h2>Your Courses</h2>
-                        <p>Course list will appear here</p>
-                    </div>
+                    <StudentDashboard srn={userData.userId} />
                 )}
 
                 {userData?.role === 'TEACHER' && (

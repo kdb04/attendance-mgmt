@@ -1,6 +1,7 @@
 package com.AttendanceManagementSystem.controller;
 
 import com.AttendanceManagementSystem.model.Student;
+import com.AttendanceManagementSystem.model.Course;
 import com.AttendanceManagementSystem.service.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,16 @@ public class StudentController {
             } else {
                 return ResponseEntity.notFound().build();
             }
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{srn}/courses")
+    public ResponseEntity<List<Course>> getEnrolledCourses(@PathVariable String srn) {
+        try {
+            List<Course> enrolledCourses = studentService.getEnrolledCourses(srn);
+            return ResponseEntity.ok(enrolledCourses);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
