@@ -1,6 +1,7 @@
 package com.AttendanceManagementSystem.controller;
 
 import com.AttendanceManagementSystem.model.Teacher;
+import com.AttendanceManagementSystem.model.Course;
 import com.AttendanceManagementSystem.service.TeacherService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/teachers")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")  // Add this line
 public class TeacherController {
 
     private final TeacherService teacherService;
@@ -79,6 +81,20 @@ public class TeacherController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error deleting teacher: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/{trn}/courses")
+    public ResponseEntity<List<Course>> getAssignedCourses(@PathVariable String trn) {
+        try {
+            System.out.println("Fetching courses for teacher: " + trn);
+            List<Course> assignedCourses = teacherService.getAssignedCourses(trn);
+            System.out.println("Found courses: " + assignedCourses);
+            return ResponseEntity.ok(assignedCourses);
+        } catch (Exception e) {
+            System.err.println("Error fetching courses: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
         }
     }
 }

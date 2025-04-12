@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import StudentDashboard from './StudentDashboard'
-import api from './services/api'
+import TeacherDashboard from './TeacherDashboard'
 import './Dashboard.css'
 
 function Dashboard() {
@@ -24,7 +24,9 @@ function Dashboard() {
     }, [navigate])
 
     const handleLogout = () => {
-        localStorage.clear()
+        localStorage.removeItem('userId')
+        localStorage.removeItem('role')
+        localStorage.removeItem('name')
         navigate('/')
     }
 
@@ -51,10 +53,7 @@ function Dashboard() {
                 )}
 
                 {userData?.role === 'TEACHER' && (
-                    <div className="teacher-content">
-                        <h2>Your Classes</h2>
-                        <p>Class list will appear here</p>
-                    </div>
+                    <TeacherDashboard trn={userData.userId} />
                 )}
 
                 {userData?.role === 'ADMIN' && (

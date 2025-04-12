@@ -1,7 +1,10 @@
 package com.AttendanceManagementSystem.service;
 
 import com.AttendanceManagementSystem.model.Teacher;
+import com.AttendanceManagementSystem.model.Course;
 import com.AttendanceManagementSystem.repository.TeacherRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +14,19 @@ import java.util.Optional;
 public class TeacherService {
 
     private final TeacherRepository teacherRepository;
+    private final JdbcTemplate jdbcTemplate;
 
-    public TeacherService(TeacherRepository teacherRepository) {
+    // Add courseRowMapper definition
+    private final RowMapper<Course> courseRowMapper = (rs, rowNum) ->
+        new Course(
+            rs.getString("course_code"),
+            rs.getString("course_name"),
+            rs.getInt("credits")
+        );
+
+    public TeacherService(TeacherRepository teacherRepository, JdbcTemplate jdbcTemplate) {
         this.teacherRepository = teacherRepository;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public List<Teacher> getAllTeachers() {
@@ -35,5 +48,16 @@ public class TeacherService {
 
     public int deleteTeacher(String trn) {
         return teacherRepository.deleteTeacher(trn);
+    }
+
+    public List<Course> getAssignedCourses(String trn) {
+        String sql = """
+            SELECT c.* 
+            FROM Courses c
+            JOIN TeacherAssignments ta ON c.course_code = ta.course_code
+            WHERE ta.trn = ?
+        """;
+        
+        return jdbcTemplate.query(sql, courseRowMapper, trn);
     }
 }
