@@ -1,6 +1,7 @@
 package com.AttendanceManagementSystem.controller;
 
 import com.AttendanceManagementSystem.model.Course;
+import com.AttendanceManagementSystem.model.Student;
 import com.AttendanceManagementSystem.service.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,6 +79,16 @@ public class CourseController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error deleting course: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/{courseCode}/students")
+    public ResponseEntity<List<Student>> getEnrolledStudents(@PathVariable String courseCode) {
+        try {
+            List<Student> enrolledStudents = courseService.getEnrolledStudents(courseCode);
+            return ResponseEntity.ok(enrolledStudents);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }
