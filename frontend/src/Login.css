@@ -60,6 +60,7 @@ body, html {
   border-radius: 6px;
   font-size: 1rem;
   transition: all 0.2s ease;
+  color: #333; /* Add this line to change text color */
 }
 
 .form-group input:focus {
@@ -67,6 +68,7 @@ body, html {
   border-color: #1976d2;
   background: #fff;
   box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.1);
+  color: #1976d2; /* Change text color when focused */
 }
 
 .form-group input::placeholder {
