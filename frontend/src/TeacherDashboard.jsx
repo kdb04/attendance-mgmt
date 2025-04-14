@@ -21,6 +21,9 @@ function TeacherDashboard({ trn }) {
     const [activeSession, setActiveSession] = useState(null)
     const [attendanceStatus, setAttendanceStatus] = useState({})
     const [submitting, setSubmitting] = useState(false)
+    const [pastSessions, setPastSessions] = useState([])
+    const [loadingSessions, setLoadingSessions] = useState(false)
+    const [showPastSessions, setShowPastSessions] = useState(false)
 
     useEffect(() => {
         const fetchAssignedCourses = async () => {
@@ -52,14 +55,55 @@ function TeacherDashboard({ trn }) {
         })
         
         try {
-            const response = await api.get(`/courses/${course.courseCode}/students`)
-            setStudents(response.data)
+            // Fetch students enrolled in the course
+            const studentsResponse = await api.get(`/courses/${course.courseCode}/students`)
+            setStudents(studentsResponse.data)
+            
+            // Fetch past sessions for this course
+            setLoadingSessions(true)
+            const sessionsResponse = await api.get(`/sessions/course/${course.courseCode}/teacher/${trn}`)
+            setPastSessions(sessionsResponse.data)
+            setLoadingSessions(false)
+            
+            setLoadingStudents(false)
+            setShowPastSessions(true) // Show past sessions by default
+        } catch (err) {
+            console.error('Error fetching course data:', err)
+            setStudents([])
+            setPastSessions([])
+            setLoadingStudents(false)
+            setLoadingSessions(false)
+        }
+    }
+
+    const handleSessionSelect = async (sessionId) => {
+        setLoadingStudents(true)
+        setActiveSession(sessionId)
+        setShowPastSessions(false)
+        
+        try {
+            const response = await api.get(`/sessions/${sessionId}/attendance`)
+            
+            // Convert attendance data to the format we need
+            const status = {}
+            response.data.forEach(record => {
+                status[record.srn] = record.status
+            })
+            
+            setAttendanceStatus(status)
             setLoadingStudents(false)
         } catch (err) {
-            console.error('Error fetching students:', err)
-            setStudents([])
+            console.error('Error fetching attendance data:', err)
+            setAttendanceStatus({})
             setLoadingStudents(false)
+            alert('Failed to load attendance data. Please try again.')
         }
+    }
+
+    const handleBackToSessions = () => {
+        setActiveSession(null)
+        setAttendanceStatus({})
+        setShowPastSessions(true)
     }
 
     const handleBackToCourses = () => {
@@ -68,14 +112,19 @@ function TeacherDashboard({ trn }) {
         setShowSessionForm(false)
         setActiveSession(null)
         setAttendanceStatus({})
+        setPastSessions([])
+        setShowPastSessions(false)
     }
 
     const handleCreateSession = () => {
-        setShowSessionForm(true)
+        setShowSessionForm(true);
+        setShowPastSessions(false);
+        setActiveSession(null);
     }
 
     const handleCloseForm = () => {
-        setShowSessionForm(false)
+        setShowSessionForm(false);
+        setShowPastSessions(true);
     }
 
     const handleSessionInputChange = (e) => {
@@ -170,13 +219,22 @@ function TeacherDashboard({ trn }) {
                         ← Back to Courses
                     </button>
                     <h2>{selectedCourse.courseName} ({selectedCourse.courseCode})</h2>
-                    {!activeSession && !showSessionForm && (
+                    {!activeSession && (
                         <button onClick={handleCreateSession} className="create-session-btn">
                             Create New Session
                         </button>
                     )}
                 </div>
                 
+                {activeSession && (
+                    <div className="active-session-header">
+                        <button onClick={handleBackToSessions} className="back-button">
+                            ← Back to Sessions
+                        </button>
+                        <h3>Managing Attendance for Session #{activeSession}</h3>
+                    </div>
+                )}
+
                 {showSessionForm && (
                     <div className="session-form-container">
                         <h3>Create New Class Session</h3>
@@ -234,56 +292,88 @@ function TeacherDashboard({ trn }) {
                         </form>
                     </div>
                 )}
+
+                {showPastSessions && !showSessionForm && (
+                    <div className="sessions-container">
+                        <h3>Previous Class Sessions</h3>
+                        {loadingSessions ? (
+                            <div className="loading">Loading sessions...</div>
+                        ) : pastSessions.length === 0 ? (
+                            <div className="no-sessions">No previous sessions found for this course</div>
+                        ) : (
+                            <div className="sessions-list">
+                                {pastSessions.map(session => (
+                                    <div 
+                                        key={session.sessionId} 
+                                        className="session-card"
+                                        onClick={() => handleSessionSelect(session.sessionId)}
+                                    >
+                                        <h4>Session #{session.sessionId}</h4>
+                                        <div className="session-details">
+                                            <p><strong>Date:</strong> {new Date(session.sessionDate).toLocaleDateString()}</p>
+                                            <p><strong>Time:</strong> {session.startTime} - {session.endTime}</p>
+                                        </div>
+                                        <div className="manage-attendance-prompt">
+                                            Click to manage attendance
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
                 
-                <div className="student-list-container">
-                    <h3>
-                        {activeSession 
-                            ? 'Mark Attendance for this Session' 
-                            : 'Enrolled Students'}
-                    </h3>
-                    
-                    {loadingStudents ? (
-                        <div className="loading">Loading students...</div>
-                    ) : students.length === 0 ? (
-                        <div className="no-students">No students enrolled in this course</div>
-                    ) : (
-                        <div className="table-wrapper">
-                            <table className="student-table">
-                                <thead>
-                                    <tr>
-                                        <th>SRN</th>
-                                        <th>Name</th>
-                                        {activeSession && <th>Attendance</th>}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {students.map(student => (
-                                        <tr key={student.srn}>
-                                            <td>{student.srn}</td>
-                                            <td>{student.name}</td>
-                                            {activeSession && (
-                                                <td className="attendance-cell">
-                                                    <button 
-                                                        className={`present-btn ${attendanceStatus[student.srn] === 'present' ? 'active' : ''}`}
-                                                        onClick={() => handleAttendanceChange(student.srn, 'present')}
-                                                    >
-                                                        ✓
-                                                    </button>
-                                                    <button 
-                                                        className={`absent-btn ${attendanceStatus[student.srn] === 'absent' ? 'active' : ''}`}
-                                                        onClick={() => handleAttendanceChange(student.srn, 'absent')}
-                                                    >
-                                                        ✗
-                                                    </button>
-                                                </td>
-                                            )}
+                {(activeSession || showSessionForm) && (
+                    <div className="student-list-container">
+                        <h3>
+                            {activeSession 
+                                ? 'Mark Attendance for this Session' 
+                                : 'Enrolled Students'}
+                        </h3>
+                        
+                        {loadingStudents ? (
+                            <div className="loading">Loading students...</div>
+                        ) : students.length === 0 ? (
+                            <div className="no-students">No students enrolled in this course</div>
+                        ) : (
+                            <div className="table-wrapper">
+                                <table className="student-table">
+                                    <thead>
+                                        <tr>
+                                            <th>SRN</th>
+                                            <th>Name</th>
+                                            {activeSession && <th>Attendance</th>}
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
+                                    </thead>
+                                    <tbody>
+                                        {students.map(student => (
+                                            <tr key={student.srn}>
+                                                <td>{student.srn}</td>
+                                                <td>{student.name}</td>
+                                                {activeSession && (
+                                                    <td className="attendance-cell">
+                                                        <button 
+                                                            className={`present-btn ${attendanceStatus[student.srn] === 'present' ? 'active' : ''}`}
+                                                            onClick={() => handleAttendanceChange(student.srn, 'present')}
+                                                        >
+                                                            ✓
+                                                        </button>
+                                                        <button 
+                                                            className={`absent-btn ${attendanceStatus[student.srn] === 'absent' ? 'active' : ''}`}
+                                                            onClick={() => handleAttendanceChange(student.srn, 'absent')}
+                                                        >
+                                                            ✗
+                                                        </button>
+                                                    </td>
+                                                )}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         )
     }

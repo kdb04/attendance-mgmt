@@ -3,6 +3,7 @@ package com.AttendanceManagementSystem.service;
 import com.AttendanceManagementSystem.model.ClassSession;
 import com.AttendanceManagementSystem.model.AttendanceRecord;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,9 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Time;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class SessionService {
@@ -86,5 +90,44 @@ public class SessionService {
             record.getSessionId(),
             record.getSrn()
         );
+    }
+
+    private final RowMapper<ClassSession> sessionRowMapper = (rs, rowNum) ->
+        new ClassSession(
+            rs.getInt("session_id"),
+            rs.getString("course_code"),
+            rs.getString("trn"),
+            rs.getDate("session_date").toLocalDate(),
+            rs.getTime("start_time").toLocalTime(),
+            rs.getTime("end_time").toLocalTime()
+        );
+
+    public List<ClassSession> getSessionsByCourseAndTeacher(String courseCode, String trn) {
+        String sql = """
+            SELECT * 
+            FROM ClassSessions
+            WHERE course_code = ? AND trn = ?
+            ORDER BY session_date DESC, start_time DESC
+        """;
+        
+        return jdbcTemplate.query(sql, sessionRowMapper, courseCode, trn);
+    }
+
+    public List<Map<String, Object>> getAttendanceBySession(Integer sessionId) {
+        String sql = """
+            SELECT a.srn, a.status, s.name 
+            FROM Attendance a
+            JOIN Students s ON a.srn = s.srn
+            WHERE a.session_id = ?
+            ORDER BY s.name
+        """;
+        
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Map<String, Object> attendance = new HashMap<>();
+            attendance.put("srn", rs.getString("srn"));
+            attendance.put("status", rs.getString("status"));
+            attendance.put("name", rs.getString("name"));
+            return attendance;
+        }, sessionId);
     }
 }

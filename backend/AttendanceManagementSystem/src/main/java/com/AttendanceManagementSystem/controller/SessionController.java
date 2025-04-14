@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -43,6 +44,28 @@ public class SessionController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "Failed to update attendance: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/course/{courseCode}/teacher/{trn}")
+    public ResponseEntity<List<ClassSession>> getSessionsByCourseAndTeacher(
+            @PathVariable String courseCode, 
+            @PathVariable String trn) {
+        try {
+            List<ClassSession> sessions = sessionService.getSessionsByCourseAndTeacher(courseCode, trn);
+            return ResponseEntity.ok(sessions);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/{sessionId}/attendance")
+    public ResponseEntity<List<Map<String, Object>>> getAttendanceBySession(@PathVariable Integer sessionId) {
+        try {
+            List<Map<String, Object>> attendance = sessionService.getAttendanceBySession(sessionId);
+            return ResponseEntity.ok(attendance);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

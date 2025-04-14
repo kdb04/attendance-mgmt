@@ -23,22 +23,52 @@
     align-items: center;
     margin-bottom: 25px;
     gap: 15px;
+    /* Ensure proper wrapping on smaller screens */
+    flex-wrap: wrap;
+    /* Ensure minimum height for the container */
+    min-height: 50px;
 }
 
-.back-button {
+.create-session-btn {
     padding: 8px 16px;
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: #1976d2;
+    color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9rem;
-    display: flex;
-    align-items: center;
+    margin-left: auto;
+    /* Ensure button doesn't shrink */
+    flex-shrink: 0;
+    /* Add higher z-index to ensure it's above other elements */
+    position: relative;
+    z-index: 3;
+    /* Add hover effect for better visibility */
+    transition: all 0.2s ease;
+    /* Make button more noticeable */
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    /* Add highlight glow to make it more visible */
+    animation: pulse 2s infinite;
 }
 
-.back-button:hover {
-    background-color: #e0e0e0;
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(25, 118, 210, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(25, 118, 210, 0);
+    }
+}
+
+.create-session-btn:hover {
+    background-color: #1565c0;
+    /* Add slight lift on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .student-list-container {
@@ -47,10 +77,13 @@
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     /* Add max height and enable scrolling */
-    max-height: 70vh;
+    max-height: 65vh;
     overflow: auto;
-    /* Add smooth scrolling */
     scroll-behavior: smooth;
+    /* Add padding to top to ensure first rows are visible */
+    padding-top: 25px;
+    /* Add initial scroll position to start at the top */
+    scroll-padding-top: 25px;
 }
 
 .student-list-container h3 {
@@ -79,7 +112,9 @@
 .student-table thead {
     position: sticky;
     top: 0;
-    z-index: 1;
+    z-index: 2;
+    /* Add shadow to make header stand out from content */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .student-table th, 
@@ -113,21 +148,6 @@
     text-align: center;
     padding: 30px 0;
     color: #666;
-}
-
-.create-session-btn {
-    padding: 8px 16px;
-    background-color: #1976d2;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    margin-left: auto;
-}
-
-.create-session-btn:hover {
-    background-color: #1565c0;
 }
 
 .session-form-container {
@@ -254,4 +274,85 @@
     background-color: #c62828;
     color: white;
     border-color: #c62828;
+}
+
+/* Styles for session history */
+.active-session-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.active-session-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.sessions-container {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    /* Add max height and enable smooth scrolling for large session lists */
+    max-height: 50vh;
+    overflow: auto;
+    scroll-behavior: smooth;
+    padding-right: 10px;
+}
+
+.sessions-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+    /* Ensure padding at bottom for scrolling */
+    padding-bottom: 10px;
+}
+
+.session-card {
+    background: #f8faff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.session-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    background: #f0f7ff;
+}
+
+.session-card h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #1976d2;
+}
+
+.session-details {
+    margin: 8px 0;
+}
+
+.session-details p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.manage-attendance-prompt {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    color: #1976d2;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.no-sessions {
+    text-align: center;
+    padding: 30px 0;
+    color: #666;
+    font-style: italic;
 }
