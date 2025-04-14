@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -58,5 +59,62 @@ public class StudentService {
         """;
 
         return jdbcTemplate.query(sql, courseRowMapper, srn);
+    }
+
+    public Map<String, Object> getAttendanceStats(String srn, String courseCode) {
+        String sql = """
+            WITH CourseDetails AS (
+                SELECT 
+                    course_code, 
+                    total_classes,
+                    CEILING(0.75 * total_classes) AS min_sessions_required
+                FROM 
+                    Courses
+                WHERE 
+                    course_code = ?
+            ),
+            SessionsHeld AS (
+                SELECT 
+                    COUNT(*) as total_sessions_held
+                FROM 
+                    ClassSessions
+                WHERE 
+                    course_code = ?
+            ),
+            StudentAttendance AS (
+                SELECT 
+                    COUNT(*) as sessions_attended
+                FROM 
+                    Attendance a
+                JOIN 
+                    ClassSessions cs ON a.session_id = cs.session_id
+                WHERE 
+                    a.srn = ?
+                    AND cs.course_code = ?
+                    AND a.status = 'present'
+            )
+            SELECT
+                cd.course_code,
+                cd.total_classes AS total_classes_for_course,
+                sh.total_sessions_held AS classes_held_so_far,
+                cd.min_sessions_required,
+                sa.sessions_attended AS current_attendance,
+                CASE 
+                    WHEN sh.total_sessions_held = 0 THEN 0
+                    ELSE ROUND((sa.sessions_attended * 100.0) / sh.total_sessions_held, 2)
+                END AS current_attendance_percentage,
+                CASE 
+                    WHEN sa.sessions_attended >= cd.min_sessions_required THEN 0
+                    ELSE cd.min_sessions_required - sa.sessions_attended
+                END AS additional_sessions_needed
+            FROM 
+                CourseDetails cd
+            CROSS JOIN 
+                SessionsHeld sh
+            CROSS JOIN 
+                StudentAttendance sa
+        """;
+
+        return jdbcTemplate.queryForMap(sql, courseCode, courseCode, srn, courseCode);
     }
 }

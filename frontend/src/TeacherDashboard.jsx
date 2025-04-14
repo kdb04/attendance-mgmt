@@ -399,7 +399,7 @@ function TeacherDashboard({ trn }) {
                                 <p><strong>Credits:</strong> {course.credits}</p>
                             </div>
                             <div className="view-students-prompt">
-                                Click to view enrolled students
+                                Click to view previous class sessions
                             </div>
                         </div>
                     ))}

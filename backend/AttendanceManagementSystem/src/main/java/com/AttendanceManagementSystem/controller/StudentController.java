@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/students")
@@ -46,6 +47,20 @@ public class StudentController {
             return ResponseEntity.ok(enrolledCourses);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{srn}/courses/{courseCode}/attendance")
+    public ResponseEntity<?> getAttendanceStats(
+        @PathVariable String srn, 
+        @PathVariable String courseCode
+    ) {
+        try {
+            Map<String, Object> stats = studentService.getAttendanceStats(srn, courseCode);
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                               .body("Error fetching attendance statistics: " + e.getMessage());
         }
     }
 

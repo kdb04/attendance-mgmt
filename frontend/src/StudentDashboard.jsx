@@ -6,6 +6,9 @@ function StudentDashboard({ srn }) {
     const [courses, setCourses] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [selectedCourse, setSelectedCourse] = useState(null)
+    const [attendanceStats, setAttendanceStats] = useState(null)
+    const [loadingStats, setLoadingStats] = useState(false)
 
     useEffect(() => {
         const fetchEnrolledCourses = async () => {
@@ -26,6 +29,24 @@ function StudentDashboard({ srn }) {
             fetchEnrolledCourses()
         }
     }, [srn])
+
+    const handleCourseClick = async (course) => {
+        setSelectedCourse(course)
+        setLoadingStats(true)
+        try {
+            const response = await api.get(`/students/${srn}/courses/${course.courseCode}/attendance`)
+            setAttendanceStats(response.data)
+        } catch (err) {
+            console.error('Error fetching attendance stats:', err)
+        } finally {
+            setLoadingStats(false)
+        }
+    }
+
+    const handleCloseStats = () => {
+        setSelectedCourse(null)
+        setAttendanceStats(null)
+    }
 
     if (loading) {
         return (
@@ -58,14 +79,66 @@ function StudentDashboard({ srn }) {
             ) : (
                 <div className="courses-grid">
                     {courses?.map(course => (
-                        <div key={course.courseCode} className="course-card">
+                        <div 
+                            key={course.courseCode} 
+                            className="course-card clickable"
+                            onClick={() => handleCourseClick(course)}
+                        >
                             <h3>{course.courseName}</h3>
                             <div className="course-details">
                                 <p><strong>Course Code:</strong> {course.courseCode}</p>
                                 <p><strong>Credits:</strong> {course.credits}</p>
                             </div>
+                            <div className="view-stats-prompt">
+                                Click to view attendance statistics
+                            </div>
                         </div>
                     ))}
+                </div>
+            )}
+
+            {selectedCourse && (
+                <div className="stats-modal">
+                    <div className="stats-content">
+                        <h3>{selectedCourse.courseName} - Attendance Statistics</h3>
+                        {loadingStats ? (
+                            <div className="loading">Loading statistics...</div>
+                        ) : attendanceStats ? (
+                            <table className="stats-table">
+                                <tbody>
+                                    <tr>
+                                        <td>Total Classes Planned</td>
+                                        <td>{attendanceStats.total_classes_for_course}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Classes Held So Far</td>
+                                        <td>{attendanceStats.classes_held_so_far}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Classes Attended</td>
+                                        <td>{attendanceStats.current_attendance}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Current Attendance</td>
+                                        <td>{attendanceStats.current_attendance_percentage}%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Minimum Sessions Required</td>
+                                        <td>{attendanceStats.min_sessions_required}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Additional Sessions Needed</td>
+                                        <td>{attendanceStats.additional_sessions_needed}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p>Failed to load statistics</p>
+                        )}
+                        <button onClick={handleCloseStats} className="close-btn">
+                            Close
+                        </button>
+                    </div>
                 </div>
             )}
         </div>
