@@ -1,4 +1,5 @@
 .course-card.clickable {
+	height: 100%;
     cursor: pointer;
     position: relative;
     overflow: hidden;
@@ -13,8 +14,8 @@
 .view-students-prompt {
     margin-top: 12px;
     padding-top: 10px;
-    border-top: 1px solid #eee;
-    color: #1976d2;
+    border-top: 1px solid #2d4f67;
+    color: #7fb4ca;
     font-size: 0.85rem;
     font-weight: 500;
 }
@@ -24,44 +25,39 @@
     align-items: center;
     margin-bottom: 25px;
     gap: 15px;
-    /* Ensure proper wrapping on smaller screens */
     flex-wrap: wrap;
-    /* Ensure minimum height for the container */
     min-height: 50px;
 }
 
 .create-session-btn {
+	max-width: 20%;
     padding: 8px 16px;
-    background-color: #1976d2;
-    color: white;
+    background-color: #7fb4ca;
+    color: #0d0c0c;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9rem;
     margin-left: auto;
-    /* Ensure button doesn't shrink */
     flex-shrink: 0;
-    /* Add higher z-index to ensure it's above other elements */
     position: relative;
     z-index: 3;
-    /* Add hover effect for better visibility */
     transition: all 0.2s ease;
-    /* Make button more noticeable */
     font-weight: 500;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .create-session-btn:hover {
-    background-color: #1565c0;
-    /* Add slight lift on hover */
+    background-color: #8ba4b0;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .back-button {
     padding: 8px 16px;
-    background-color: #f5f5f5;
-    color: #1976d2;
+	max-width: 20%;
+    background-color: #12120f;
+    color: #7fb4ca;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -70,21 +66,18 @@
 }
 
 .back-button:hover {
-    background-color: #e0e0e0;
+    background-color: #2d4f67;
 }
 
 .student-list-container {
-    background: white;
+    background: #0d0c0c;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    /* Add max height and enable scrolling */
     max-height: 65vh;
     overflow: auto;
     scroll-behavior: smooth;
-    /* Add padding to top to ensure first rows are visible */
     padding-top: 25px;
-    /* Add initial scroll position to start at the top */
     scroll-padding-top: 25px;
     margin-bottom: 20px;
 }
@@ -92,30 +85,28 @@
 .student-list-container h3 {
     margin-top: 0;
     margin-bottom: 20px;
-    color: #333;
+    color: #c8c093;
     font-size: 1.2rem;
 }
 
-/* Add a wrapper for the table for horizontal scrolling if needed */
 .table-wrapper {
     width: 100%;
     overflow-x: auto;
     margin-bottom: 10px;
 }
 
-/* Modify existing table styles */
 .student-table {
     width: 100%;
-    min-width: 400px; /* Ensure minimum width */
+    min-width: 400px;
     border-collapse: collapse;
-    background-color: #fcfcfc; /* Add light background color */
+    background-color: #12120f;
+	table-layout: fixed;
 }
 
 .student-table thead {
     position: sticky;
     top: 0;
     z-index: 2;
-    /* Add shadow to make header stand out from content */
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
@@ -123,13 +114,15 @@
 .student-table td {
     padding: 12px 15px;
     text-align: left;
-    border-bottom: 1px solid #eee;
-    color: #333; /* Add text color for table contents */
+    border-bottom: 1px solid #2d4f67;
+    color: #c8c093;
+	vertical-align: middle;
+	word-wrap: break-word;
 }
 
 .student-table th {
-    background-color: #f8f9fa; /* Change header background */
-    color: #1976d2; /* Change header text color to match theme */
+    background-color: #181616;
+    color: #8ea4a2;
     font-weight: 600;
 }
 
@@ -138,22 +131,21 @@
 }
 
 .student-table tr:hover td {
-    background-color: #f0f7ff; /* Slightly more vibrant hover color */
+    background-color: #2d4f67;
 }
 
-/* Add zebra striping for better readability */
 .student-table tr:nth-child(even) {
-    background-color: #f8faff;
+    background-color: #181616;
 }
 
 .no-students {
     text-align: center;
     padding: 30px 0;
-    color: #666;
+    color: #a6a69c;
 }
 
 .session-form-container {
-    background: white;
+    background: #0d0c0c;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
@@ -163,7 +155,7 @@
 .session-form-container h3 {
     margin-top: 0;
     margin-bottom: 20px;
-    color: #333;
+    color: #c8c093;
 }
 
 .session-form {
@@ -180,14 +172,16 @@
 
 .session-form label {
     font-weight: 500;
-    color: #555;
+    color: #a6a69c;
 }
 
 .session-form input {
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #2d4f67;
     border-radius: 4px;
     font-size: 1rem;
+    background-color: #12120f;
+    color: #c8c093;
 }
 
 .form-actions {
@@ -207,21 +201,21 @@
 }
 
 .cancel-btn {
-    background-color: #f5f5f5;
-    color: #333;
+    background-color: #12120f;
+    color: #c8c093;
 }
 
 .submit-btn {
-    background-color: #1976d2;
-    color: white;
+    background-color: #7fb4ca;
+    color: #0d0c0c;
 }
 
 .cancel-btn:hover {
-    background-color: #e0e0e0;
+    background-color: #2d4f67;
 }
 
 .submit-btn:hover {
-    background-color: #1565c0;
+    background-color: #8ba4b0;
 }
 
 .cancel-btn:disabled, .submit-btn:disabled {
@@ -240,7 +234,7 @@
     height: 36px;
     border-radius: 50%;
     border: 2px solid;
-    background: white;
+    background: #0d0c0c;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -249,36 +243,35 @@
 }
 
 .present-btn {
-    color: #2e7d32;
-    border-color: #2e7d32;
+    color: #87a987;
+    border-color: #87a987;
 }
 
 .absent-btn {
-    color: #c62828;
-    border-color: #c62828;
+    color: #e46876;
+    border-color: #e46876;
 }
 
 .present-btn:hover {
-    background-color: #e8f5e9;
-    border-color: #2e7d32;
+    background-color: #12120f;
+    border-color: #87a987;
 }
 
 .absent-btn:hover {
-    background-color: #ffebee;
-    border-color: #c62828;
+    background-color: #12120f;
+    border-color: #e46876;
 }
 
 .present-btn.active {
-    background-color: #2e7d32;
-    color: white;
+    background-color: #87a987;
+    color: #0d0c0c;
 }
 
 .absent-btn.active {
-    background-color: #c62828;
-    color: white;
+    background-color: #e46876;
+    color: #0d0c0c;
 }
 
-/* Styles for session history */
 .active-session-header {
     display: flex;
     align-items: center;
@@ -288,24 +281,24 @@
 
 .active-session-header h3 {
     margin: 0;
-    color: #333;
+    color: #c8c093;
 }
 
 .sessions-container {
-    background: white;
+    /* background: #0d0c0c; */
+	height: 100%;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-bottom: 20px;
-    /* Add max height and enable smooth scrolling for large session lists */
-    max-height: 50vh;
+    /* max-height: 50vh; */
     overflow: auto;
     scroll-behavior: smooth;
     padding-right: 10px;
 }
 
 .sessions-container h3 {
-    color: #1976d2;
+    color: #8ea4a2;
     margin-bottom: 20px;
 }
 
@@ -314,12 +307,11 @@
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 16px;
     margin-top: 16px;
-    /* Ensure padding at bottom for scrolling */
     padding-bottom: 10px;
 }
 
 .session-card {
-    background: white;
+    background: #12120f;
     border-radius: 8px;
     padding: 16px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -336,7 +328,7 @@
 .session-card h4 {
     margin-top: 0;
     margin-bottom: 10px;
-    color: #1976d2;
+    color: #8ea4a2;
 }
 
 .session-details {
@@ -346,14 +338,14 @@
 .session-details p {
     margin: 5px 0;
     font-size: 0.95rem;
-    color: #1976d2;
+    color: #7fb4ca;
 }
 
 .manage-attendance-prompt {
     margin-top: 12px;
     padding-top: 10px;
-    border-top: 1px solid #eee;
-    color: #1976d2;
+    border-top: 1px solid #2d4f67;
+    color: #7fb4ca;
     font-size: 0.85rem;
     font-weight: 500;
 }
@@ -361,18 +353,20 @@
 .no-sessions {
     text-align: center;
     padding: 30px 0;
-    color: #666;
+    color: #a6a69c;
     font-style: italic;
 }
 
 .teacher-content {
     padding: 20px;
-    background-color: #f8f9fa;
+	overflow: hidden;
+	height: 100%;
+    background-color: #12120f;
     border-radius: 8px;
 }
 
 .teacher-content h2 {
-    color: #1976d2;
+    color: #8ea4a2;
     margin-bottom: 20px;
     font-size: 1.8rem;
 }
@@ -385,7 +379,7 @@
 }
 
 .course-card {
-    background: white;
+    background: #0d0c0c;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -398,7 +392,7 @@
 }
 
 .course-card h3 {
-    color: #1976d2;
+    color: #8ea4a2;
     margin: 0 0 15px 0;
     font-size: 1.2rem;
 }
@@ -410,7 +404,7 @@
 }
 
 .course-details p {
-    color: #666;
+    color: #a6a69c;
     margin: 0;
     font-size: 0.95rem;
 }
