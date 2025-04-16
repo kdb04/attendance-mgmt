@@ -57,5 +57,5 @@ public class StudentRepository {
     public int deleteStudent(String srn) {
         String sql = "DELETE FROM Students WHERE srn = ?";
         return jdbcTemplate.update(sql, srn);
-    }
+    } 
 }

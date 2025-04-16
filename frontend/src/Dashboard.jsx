@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import StudentDashboard from './StudentDashboard';
 import TeacherDashboard from './TeacherDashboard';
 import './Dashboard.css';
+import AdminDashboard from './AdminDashboard';
 
 function Dashboard() {
     const [userData, setUserData] = useState(null);
@@ -41,12 +42,7 @@ function Dashboard() {
             case 'TEACHER':
                 return <TeacherDashboard trn={userData.userId} />;
             case 'ADMIN':
-                return (
-                    <div className="admin-content">
-                        <h2>System Overview</h2>
-                        <p>Admin controls will appear here</p>
-                    </div>
-                );
+                return <AdminDashboard />; 
             default:
                 return <div>Unknown role</div>;
         }
