@@ -59,6 +59,13 @@ public class AdminController {
             if (!course.getCourseCode().matches("[A-Z]{2}\\d{3}")) {
                 return ResponseEntity.badRequest().body("Invalid course code format");
             }
+            
+            // Validate credits are within the acceptable range
+            if (course.getCredits() < 2 || course.getCredits() > 6) {
+                return ResponseEntity.badRequest().body("Credits must be between 2 and 6");
+            }
+            
+            // The total classes are automatically set in the Course model and repository
             courseService.addCourse(course);
             return ResponseEntity.ok("Course added successfully");
         } catch (Exception e) {

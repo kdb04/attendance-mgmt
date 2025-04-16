@@ -21,8 +21,7 @@ function AdminDashboard() {
     const [courseData, setCourseData] = useState({
         courseCode: '',
         courseName: '',
-        credits: 3,
-        totalClasses: 40
+        credits: 3
     });
 
     const handleStudentSubmit = async (e) => {
@@ -59,7 +58,7 @@ function AdminDashboard() {
         try {
             await api.post('/admin/courses', courseData);
             setMessage({ type: 'success', text: 'Course added successfully' });
-            setCourseData({ courseCode: '', courseName: '', credits: 3, totalClasses: 40 });
+            setCourseData({ courseCode: '', courseName: '', credits: 3 });
         } catch (err) {
             setMessage({ type: 'error', text: err.response?.data || 'Failed to add course' });
         } finally {
@@ -192,25 +191,20 @@ function AdminDashboard() {
                     </div>
                     <div className="form-group">
                         <label>Credits:</label>
-                        <input 
-                            type="number" 
+                        <select
                             value={courseData.credits}
                             onChange={e => setCourseData({...courseData, credits: parseInt(e.target.value)})}
-                            min="1"
-                            max="4"
                             required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Total Classes:</label>
-                        <input 
-                            type="number" 
-                            value={courseData.totalClasses}
-                            onChange={e => setCourseData({...courseData, totalClasses: parseInt(e.target.value)})}
-                            min="20"
-                            max="100"
-                            required
-                        />
+                        >
+                            <option value={2}>2 (20 classes)</option>
+                            <option value={3}>3 (40 classes)</option>
+                            <option value={4}>4 (60 classes)</option>
+                            <option value={5}>5 (80 classes)</option>
+                            <option value={6}>6 (100 classes)</option>
+                        </select>
+                        <div className="form-text">
+                            Total classes will be automatically determined based on credits.
+                        </div>
                     </div>
                     <button type="submit" disabled={loading}>
                         {loading ? 'Adding...' : 'Add Course'}

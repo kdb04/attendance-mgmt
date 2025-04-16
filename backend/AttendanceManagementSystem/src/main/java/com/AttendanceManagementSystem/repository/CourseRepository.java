@@ -43,8 +43,19 @@ public class CourseRepository {
 
     //INSERT
     public int addCourse(Course course) {
-        String sql = "INSERT INTO Courses (course_code, course_name, credits) VALUES (?, ?, ?)";
-        return jdbcTemplate.update(sql, course.getCourseCode(), course.getCourseName(), course.getCredits());
+        // Calculate total classes based on credits
+        int totalClasses;
+        switch (course.getCredits()) {
+            case 2: totalClasses = 20; break;
+            case 3: totalClasses = 40; break;
+            case 4: totalClasses = 60; break;
+            case 5: totalClasses = 80; break;
+            case 6: totalClasses = 100; break;
+            default: totalClasses = 40; // default fallback
+        }
+        
+        String sql = "INSERT INTO Courses (course_code, course_name, credits, total_classes) VALUES (?, ?, ?, ?)";
+        return jdbcTemplate.update(sql, course.getCourseCode(), course.getCourseName(), course.getCredits(), totalClasses);
     }
 
     //UPDATE
