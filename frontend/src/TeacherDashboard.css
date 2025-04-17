@@ -4,6 +4,7 @@
     position: relative;
     overflow: hidden;
     transition: transform 0.2s, box-shadow 0.2s;
+	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .course-card.clickable:hover {
@@ -314,10 +315,10 @@
     background: #12120f;
     border-radius: 8px;
     padding: 16px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     cursor: pointer;
     transition: all 0.2s ease;
     margin-bottom: 10px;
+	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .session-card:hover {
