@@ -1,12 +1,10 @@
 package com.AttendanceManagementSystem.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.AttendanceManagementSystem.model.LoginRequest;
 import com.AttendanceManagementSystem.model.LoginResponse;
-import com.AttendanceManagementSystem.service.StudentService;
-import com.AttendanceManagementSystem.service.TeacherService;
+import com.AttendanceManagementSystem.facade.LoginFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,48 +14,33 @@ import org.slf4j.LoggerFactory;
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    private final LoginFacade loginFacade;
 
-    @Autowired
-    private StudentService studentService;
-
-    @Autowired
-    private TeacherService teacherService;
+    public AuthController(LoginFacade loginFacade) {
+        this.loginFacade = loginFacade;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         logger.info("Login attempt for username: {}", request.getUsername());
-
-        String username = request.getUsername();
         
-        // Check if it's admin
-        if ("admin".equals(username) && "admin123#".equals(request.getPassword())) {
-            return ResponseEntity.ok(new LoginResponse("admin", "ADMIN", "Admin user", "Login successful"));
+        String username = request.getUsername();
+        LoginResponse response = null;
+
+        // Using facade to handle different types of login
+        if ("admin".equals(username)) {
+            response = loginFacade.adminLogin(username, request.getPassword());
+        } 
+        else if (username.startsWith("PES")) {
+            response = loginFacade.studentLogin(username);
+        } 
+        else if (username.startsWith("TRN")) {
+            response = loginFacade.teacherLogin(username);
         }
 
-        // Check if it's a student (PES prefix)
-        if (username.startsWith("PES")) {
-            var student = studentService.getStudentById(username);
-            if (student != null) {
-                return ResponseEntity.ok(new LoginResponse(
-                    username, 
-                    "STUDENT", 
-                    student.getName(),
-                    "Login successful"
-                ));
-            }
-        }
-
-        // Check if it's a teacher (TRN prefix)
-        if (username.startsWith("TRN")) {
-            var teacher = teacherService.getTeacherByTRN(username);
-            if (teacher != null) {
-                return ResponseEntity.ok(new LoginResponse(
-                    username,
-                    "TEACHER",
-                    teacher.getName(),
-                    "Login successful"
-                ));
-            }
+        if (response != null) {
+            logger.info("Login successful for user: {}", username);
+            return ResponseEntity.ok(response);
         }
 
         logger.error("Login failed for username: {}", username);
