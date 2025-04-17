@@ -14,8 +14,9 @@ public class StudentRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public StudentRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public StudentRepository() {
+        // Get JdbcTemplate from singleton instance
+        this.jdbcTemplate = DBConnection.getInstance().getJdbcTemplate();
     }
 
     private final RowMapper<Student> studentRowMapper = (rs, rowNum) ->
