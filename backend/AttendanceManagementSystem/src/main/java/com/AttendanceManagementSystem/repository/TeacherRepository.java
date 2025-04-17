@@ -1,5 +1,6 @@
 package com.AttendanceManagementSystem.repository;
 
+import com.AttendanceManagementSystem.util.DBConnection;
 import com.AttendanceManagementSystem.model.Teacher;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

@@ -1,5 +1,6 @@
 package com.AttendanceManagementSystem.repository;
 
+import com.AttendanceManagementSystem.util.DBConnection;
 import com.AttendanceManagementSystem.model.Course;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,7 +17,7 @@ public class CourseRepository {
 
     // Use singleton database connection
     public CourseRepository() {
-        this.jdbcTemplate = DatabaseConnection.getInstance().getJdbcTemplate();
+        this.jdbcTemplate = DBConnection.getInstance().getJdbcTemplate();
     }
 
     private final RowMapper<Course> courseRowMapper = (rs, rowNum) ->
