@@ -3,9 +3,11 @@ package com.AttendanceManagementSystem.controller;
 import com.AttendanceManagementSystem.model.Student;
 import com.AttendanceManagementSystem.model.Teacher;
 import com.AttendanceManagementSystem.model.Course;
+import com.AttendanceManagementSystem.model.User;
 import com.AttendanceManagementSystem.service.StudentService;
 import com.AttendanceManagementSystem.service.TeacherService;
 import com.AttendanceManagementSystem.service.CourseService;
+import com.AttendanceManagementSystem.factory.UserFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,24 +16,27 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class AdminController {
 
+    private final UserFactory userFactory;
     private final StudentService studentService;
     private final TeacherService teacherService;
     private final CourseService courseService;
 
-    public AdminController(StudentService studentService, TeacherService teacherService, CourseService courseService) {
+    public AdminController(UserFactory userFactory, StudentService studentService, TeacherService teacherService, CourseService courseService) {
+        this.userFactory = userFactory;
         this.studentService = studentService;
         this.teacherService = teacherService;
         this.courseService = courseService;
     }
 
     @PostMapping("/students")
-    public ResponseEntity<String> addStudent(@RequestBody Student student) {
+    public ResponseEntity<String> addStudent(@RequestBody Student studentRequest) {
         try {
-            // Validate SRN format
-            if (!student.getSrn().matches("PES2UG\\d{2}CS\\d{3}")) {
-                return ResponseEntity.badRequest().body("Invalid SRN format");
-            }
-            studentService.addStudent(student);
+            User student = userFactory.createUser("STUDENT", 
+                studentRequest.getSrn(),
+                studentRequest.getName(),
+                String.valueOf(studentRequest.getYearOfStudy())
+            );
+            studentService.addStudent((Student) student);
             return ResponseEntity.ok("Student added successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error adding student: " + e.getMessage());
@@ -39,13 +44,13 @@ public class AdminController {
     }
 
     @PostMapping("/teachers")
-    public ResponseEntity<String> addTeacher(@RequestBody Teacher teacher) {
+    public ResponseEntity<String> addTeacher(@RequestBody Teacher teacherRequest) {
         try {
-            // Validate TRN format
-            if (!teacher.getTRN().matches("TRN\\d{3}")) {
-                return ResponseEntity.badRequest().body("Invalid TRN format");
-            }
-            teacherService.addTeacher(teacher);
+            User teacher = userFactory.createUser("TEACHER",
+                teacherRequest.getTRN(),
+                teacherRequest.getName()
+            );
+            teacherService.addTeacher((Teacher) teacher);
             return ResponseEntity.ok("Teacher added successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error adding teacher: " + e.getMessage());

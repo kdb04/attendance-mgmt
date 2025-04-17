@@ -1,38 +1,41 @@
 package com.AttendanceManagementSystem.model;
 
-public class Teacher {
+public class Teacher implements User {
     private String trn;
     private String name;
 
-    public Teacher(){
+    public Teacher() {
     }
 
-    public Teacher(String trn, String name){
+    public Teacher(String trn, String name) {
         this.trn = trn;
         this.name = name;
     }
 
-    public String getTRN(){
+    public String getTRN() {
         return trn;
     }
 
-    public void setTRN(String trn){
+    public void setTRN(String trn) {
         this.trn = trn;
     }
 
-    public String getName(){
+    @Override
+    public String getName() {
         return name;
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 
     @Override
-    public String toString(){
-        return "Teacher{" +
-                "trn='" + trn + '\'' +
-                ", name" + name +
-                '}';
+    public String getId() {
+        return trn;
+    }
+
+    @Override
+    public String getRole() {
+        return "TEACHER";
     }
 }
