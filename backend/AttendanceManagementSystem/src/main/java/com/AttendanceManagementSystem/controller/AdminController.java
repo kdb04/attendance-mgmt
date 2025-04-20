@@ -11,6 +11,8 @@ import com.AttendanceManagementSystem.factory.UserFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/admin")
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
@@ -75,6 +77,36 @@ public class AdminController {
             return ResponseEntity.ok("Course added successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error adding course: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/teacher-assignments")
+    public ResponseEntity<String> assignCourseToTeacher(@RequestBody Map<String, String> payload) {
+        try {
+            String trn = payload.get("trn");
+            String courseCode = payload.get("courseCode");
+            
+            // Validate TRN and courseCode exist
+            Teacher teacher = teacherService.getTeacherByTRN(trn);
+            Course course = courseService.getCourseByCode(courseCode);
+            
+            if (teacher == null) {
+                return ResponseEntity.badRequest().body("Teacher with TRN " + trn + " not found");
+            }
+            
+            if (course == null) {
+                return ResponseEntity.badRequest().body("Course with code " + courseCode + " not found");
+            }
+            
+            boolean success = teacherService.assignCourseToTeacher(trn, courseCode);
+            
+            if (success) {
+                return ResponseEntity.ok("Course assigned to teacher successfully");
+            } else {
+                return ResponseEntity.badRequest().body("Teacher is already assigned to this course");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error assigning course to teacher: " + e.getMessage());
         }
     }
 }

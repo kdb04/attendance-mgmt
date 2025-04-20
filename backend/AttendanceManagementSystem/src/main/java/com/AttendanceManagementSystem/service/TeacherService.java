@@ -60,4 +60,18 @@ public class TeacherService {
         
         return jdbcTemplate.query(sql, courseRowMapper, trn);
     }
+
+    public boolean assignCourseToTeacher(String trn, String courseCode) {
+        String sql = """
+            INSERT INTO TeacherAssignments (trn, course_code)
+            SELECT ?, ? 
+            FROM dual
+            WHERE NOT EXISTS (
+                SELECT 1 FROM TeacherAssignments WHERE trn = ? AND course_code = ?
+            )
+        """;
+        
+        int rowsAffected = jdbcTemplate.update(sql, trn, courseCode, trn, courseCode);
+        return rowsAffected > 0;
+    }
 }

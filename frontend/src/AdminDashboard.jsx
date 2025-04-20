@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import api from './services/api';
 import './AdminDashboard.css';
 
@@ -23,6 +23,39 @@ function AdminDashboard() {
         courseName: '',
         credits: 3
     });
+
+    const [assignmentData, setAssignmentData] = useState({
+        trn: '',
+        courseCode: ''
+    });
+
+    const [teachers, setTeachers] = useState([]);
+    const [courses, setCourses] = useState([]);
+    const [fetchingData, setFetchingData] = useState(false);
+
+    // Fetch teachers and courses when allocation tab is selected
+    useEffect(() => {
+        if (activeTab === 'allocations') {
+            fetchTeachersAndCourses();
+        }
+    }, [activeTab]);
+
+    const fetchTeachersAndCourses = async () => {
+        setFetchingData(true);
+        try {
+            const [teachersResponse, coursesResponse] = await Promise.all([
+                api.get('/teachers'),
+                api.get('/courses')
+            ]);
+            setTeachers(teachersResponse.data);
+            setCourses(coursesResponse.data);
+        } catch (err) {
+            console.error('Failed to fetch data:', err);
+            setMessage({ type: 'error', text: 'Failed to load teachers or courses' });
+        } finally {
+            setFetchingData(false);
+        }
+    };
 
     const handleStudentSubmit = async (e) => {
         e.preventDefault();
@@ -66,6 +99,20 @@ function AdminDashboard() {
         }
     };
 
+    const handleAssignmentSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            await api.post('/admin/teacher-assignments', assignmentData);
+            setMessage({ type: 'success', text: 'Course assigned to teacher successfully' });
+            setAssignmentData({ trn: '', courseCode: '' });
+        } catch (err) {
+            setMessage({ type: 'error', text: err.response?.data || 'Failed to assign course to teacher' });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="admin-dashboard">
             <div className="admin-tabs">
@@ -86,6 +133,12 @@ function AdminDashboard() {
                     onClick={() => setActiveTab('courses')}
                 >
                     Add Course
+                </button>
+                <button 
+                    className={activeTab === 'allocations' ? 'active' : ''} 
+                    onClick={() => setActiveTab('allocations')}
+                >
+                    Allocate Courses
                 </button>
             </div>
 
@@ -210,6 +263,52 @@ function AdminDashboard() {
                         <button type="submit" disabled={loading}>
                             {loading ? 'Adding...' : 'Add Course'}
                         </button>
+                    </form>
+                )}
+
+                {activeTab === 'allocations' && (
+                    <form onSubmit={handleAssignmentSubmit} className="admin-form">
+                        <h3>Allocate Course to Teacher</h3>
+                        
+                        {fetchingData ? (
+                            <div className="loading">Loading data...</div>
+                        ) : (
+                            <>
+                                <div className="form-group">
+                                    <label>Select Teacher:</label>
+                                    <select
+                                        value={assignmentData.trn}
+                                        onChange={e => setAssignmentData({...assignmentData, trn: e.target.value})}
+                                        required
+                                    >
+                                        <option value="">Select a teacher</option>
+                                        {teachers.map(teacher => (
+                                            <option key={teacher.trn} value={teacher.trn}>
+                                                {teacher.name} ({teacher.trn})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Select Course:</label>
+                                    <select
+                                        value={assignmentData.courseCode}
+                                        onChange={e => setAssignmentData({...assignmentData, courseCode: e.target.value})}
+                                        required
+                                    >
+                                        <option value="">Select a course</option>
+                                        {courses.map(course => (
+                                            <option key={course.courseCode} value={course.courseCode}>
+                                                {course.courseName} ({course.courseCode})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <button type="submit" disabled={loading}>
+                                    {loading ? 'Assigning...' : 'Assign Course'}
+                                </button>
+                            </>
+                        )}
                     </form>
                 )}
             </div>

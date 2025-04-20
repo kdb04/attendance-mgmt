@@ -27,7 +27,7 @@ public class DBConnection {
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUrl("jdbc:mysql://localhost:3306/ooad");
         dataSource.setUsername("root");
-        dataSource.setPassword("Nikhil1234#");
+        dataSource.setPassword("password");
         return dataSource;
     }
     

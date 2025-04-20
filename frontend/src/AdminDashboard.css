@@ -87,6 +87,8 @@ background-image: url("data:image/svg+xml,%3Csvg width='12' height='24' viewBox=
   gap: 4px;
   max-width: 200px;
   padding: 0 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
 .admin-tabs button {
@@ -101,6 +103,8 @@ background-image: url("data:image/svg+xml,%3Csvg width='12' height='24' viewBox=
   color: #a6a69c;
   text-align: left;
   transition: all 0.2s ease;
+  flex: 1;
+  min-width: 140px;
 }
 
 .admin-tabs button:hover {
@@ -388,4 +392,25 @@ button[type="submit"]:disabled {
 
 .message button:hover {
   opacity: 1;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.admin-form select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%;
+  background-color: white;
+}
+
+.admin-form .form-text {
+  margin-top: 5px;
+  font-size: 0.85rem;
+  color: #666;
 }
