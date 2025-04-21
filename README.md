@@ -51,7 +51,7 @@ The system is designed with clean architecture principles, implementing design p
 
 ## Getting Started
 
-### Prerequisites
+### Pre-requisites
 - Java 17 or newer
 - Maven
 - Node.js and npm
@@ -107,7 +107,7 @@ MIT — Use it, Build on it and Make it Great Again.
 
 ## Contributors
 
-Motamarri Sai Sathvik: http://github.com/User-LazySloth
-Narayan Sreekumar: https://github.com/vortex73
-Nikhil Srivatsa : https://github.com/kdb04/attendance-mgmt
-Nitheesh Pugazhanthi : https://github.com/noth2006
+- Motamarri Sai Sathvik: http://github.com/User-LazySloth
+- Narayan Sreekumar: https://github.com/vortex73
+- Nikhil Srivatsa : https://github.com/kdb04
+- Nitheesh Pugazhanthi : https://github.com/noth2006
