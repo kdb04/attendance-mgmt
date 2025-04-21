@@ -162,4 +162,11 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+#Python
 venv
+
+#Spring stuff
+/backend/AttendanceManagementSystem/.gitignore
+/backend/AttendanceManagementSystem/.gitattributes
+/backend/AttendanceManagementSystem/mvnw
+/backend/AttendanceManagementSystem/.mvn/wrapper
