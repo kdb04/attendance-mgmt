@@ -24,10 +24,10 @@ public class DBConnection {
     
     private DataSource createDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/ooad");
-        dataSource.setUsername("root");
-        dataSource.setPassword("password");
+		dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
+		dataSource.setUrl("jdbc:mariadb://localhost:3306/ooad");
+        dataSource.setUsername("vorrtt3x");
+        dataSource.setPassword("1234");
         return dataSource;
     }
     

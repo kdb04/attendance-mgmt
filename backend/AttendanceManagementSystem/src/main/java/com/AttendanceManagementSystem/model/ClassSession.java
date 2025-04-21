@@ -4,17 +4,24 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class ClassSession {
-    private Integer sessionId; // Changed to Integer to handle auto-increment
+
+    private Integer sessionId;
     private String courseCode;
     private String trn;
     private LocalDate sessionDate;
     private LocalTime startTime;
     private LocalTime endTime;
 
-    public ClassSession() {
-    }
+    public ClassSession() {}
 
-    public ClassSession(Integer sessionId, String courseCode, String trn, LocalDate sessionDate, LocalTime startTime, LocalTime endTime) {
+    public ClassSession(
+        Integer sessionId,
+        String courseCode,
+        String trn,
+        LocalDate sessionDate,
+        LocalTime startTime,
+        LocalTime endTime
+    ) {
         this.sessionId = sessionId;
         this.courseCode = courseCode;
         this.trn = trn;

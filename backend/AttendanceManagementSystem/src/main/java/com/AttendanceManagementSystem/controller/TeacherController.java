@@ -1,17 +1,16 @@
 package com.AttendanceManagementSystem.controller;
 
-import com.AttendanceManagementSystem.model.Teacher;
 import com.AttendanceManagementSystem.model.Course;
+import com.AttendanceManagementSystem.model.Teacher;
 import com.AttendanceManagementSystem.service.TeacherService;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/teachers")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")  // Add this line
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class TeacherController {
 
     private final TeacherService teacherService;
@@ -44,17 +43,23 @@ public class TeacherController {
     public ResponseEntity<String> addTeacher(@RequestBody Teacher teacher) {
         try {
             teacherService.addTeacher(teacher);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Teacher created successfully");
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                "Teacher created successfully"
+            );
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to create teacher: " + e.getMessage());
+            return ResponseEntity.badRequest()
+                .body("Failed to create teacher: " + e.getMessage());
         }
     }
 
     @PutMapping("/{trn}")
-    public ResponseEntity<String> updateTeacher(@PathVariable String trn, @RequestBody Teacher teacher) {
-        // Ensure the TRN in the path matches the teacher object
+    public ResponseEntity<String> updateTeacher(
+        @PathVariable String trn,
+        @RequestBody Teacher teacher
+    ) {
         if (!trn.equals(teacher.getTRN())) {
-            return ResponseEntity.badRequest().body("TRN in URL doesn't match request body");
+            return ResponseEntity.badRequest()
+                .body("TRN in URL doesn't match request body");
         }
         try {
             int rowsAffected = teacherService.updateTeacher(teacher);
@@ -64,8 +69,9 @@ public class TeacherController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error updating teacher: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                "Error updating teacher: " + e.getMessage()
+            );
         }
     }
 
@@ -79,16 +85,21 @@ public class TeacherController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error deleting teacher: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                "Error deleting teacher: " + e.getMessage()
+            );
         }
     }
 
     @GetMapping("/{trn}/courses")
-    public ResponseEntity<List<Course>> getAssignedCourses(@PathVariable String trn) {
+    public ResponseEntity<List<Course>> getAssignedCourses(
+        @PathVariable String trn
+    ) {
         try {
             System.out.println("Fetching courses for teacher: " + trn);
-            List<Course> assignedCourses = teacherService.getAssignedCourses(trn);
+            List<Course> assignedCourses = teacherService.getAssignedCourses(
+                trn
+            );
             System.out.println("Found courses: " + assignedCourses);
             return ResponseEntity.ok(assignedCourses);
         } catch (Exception e) {
