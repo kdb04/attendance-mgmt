@@ -6,17 +6,20 @@ public class LoginResponse {
     private String role;
     private String name;
     private String message;
+    private String token;
 
     public LoginResponse(
         String userId,
         String role,
         String name,
-        String message
+        String message,
+        String token
     ) {
         this.userId = userId;
         this.role = role;
         this.name = name;
         this.message = message;
+        this.token = token;
     }
 
     public String getUserId() {
@@ -49,5 +52,9 @@ public class LoginResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getToken() {
+        return token;
     }
 }

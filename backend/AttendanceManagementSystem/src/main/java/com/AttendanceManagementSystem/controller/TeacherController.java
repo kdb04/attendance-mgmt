@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/teachers")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(origins = "${FRONTEND_ORIGIN}", allowCredentials = "true")
 public class TeacherController {
 
     private final TeacherService teacherService;
@@ -96,15 +96,13 @@ public class TeacherController {
         @PathVariable String trn
     ) {
         try {
-            System.out.println("Fetching courses for teacher: " + trn);
-            List<Course> assignedCourses = teacherService.getAssignedCourses(
-                trn
-            );
-            System.out.println("Found courses: " + assignedCourses);
+            //System.out.println("Fetching courses for teacher: " + trn);
+            List<Course> assignedCourses = teacherService.getAssignedCourses(trn);
+            //System.out.println("Found courses: " + assignedCourses);
             return ResponseEntity.ok(assignedCourses);
         } catch (Exception e) {
-            System.err.println("Error fetching courses: " + e.getMessage());
-            e.printStackTrace();
+            //System.err.println("Error fetching courses: " + e.getMessage());
+            //e.printStackTrace();
             return ResponseEntity.notFound().build();
         }
     }

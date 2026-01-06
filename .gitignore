@@ -170,3 +170,26 @@ venv
 /backend/AttendanceManagementSystem/.gitattributes
 /backend/AttendanceManagementSystem/mvnw
 /backend/AttendanceManagementSystem/.mvn/wrapper
+
+#Java/Maven
+backend/**/target/
+backend/**/.classpath
+backend/**/.project
+backend/**/.settings
+backend/**/maven-status 
+backend/AttendanceManagementSystem/src/main/resources/application.properties
+
+#Misc
+.idea/ 
+.vscode/
+.*iml
+.DS_Store
+
+#Frontend
+frontend/node_modules/
+frontend/dist/
+
+#env files
+backend/**/.env
+
+

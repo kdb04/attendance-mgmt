@@ -5,6 +5,7 @@ import com.AttendanceManagementSystem.model.Student;
 import com.AttendanceManagementSystem.model.Teacher;
 import com.AttendanceManagementSystem.service.StudentService;
 import com.AttendanceManagementSystem.service.TeacherService;
+import com.AttendanceManagementSystem.util.JwtUtil;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,11 +22,14 @@ public class LoginFacadeImpl implements LoginFacade {
     @Override
     public LoginResponse adminLogin(String username, String password) {
         if ("admin".equals(username) && "admin123#".equals(password)) {
+            String token = JwtUtil.generateToken("admin", "ADMIN", "Admin user");
+
             return new LoginResponse(
                 "admin",
                 "ADMIN",
                 "Admin user",
-                "Login successful"
+                "Login successful",
+                token
             );
         }
         return null;
@@ -35,11 +39,13 @@ public class LoginFacadeImpl implements LoginFacade {
     public LoginResponse studentLogin(String username) {
         Student student = studentService.getStudentById(username);
         if (student != null) {
+            String token = JwtUtil.generateToken(username, "STUDENT", student.getName());
             return new LoginResponse(
                 username,
                 "STUDENT",
                 student.getName(),
-                "Login successful"
+                "Login successful",
+                token
             );
         }
         return null;
@@ -49,11 +55,13 @@ public class LoginFacadeImpl implements LoginFacade {
     public LoginResponse teacherLogin(String username) {
         Teacher teacher = teacherService.getTeacherByTRN(username);
         if (teacher != null) {
+            String token = JwtUtil.generateToken(username, "TEACHER", teacher.getName());
             return new LoginResponse(
                 username,
                 "TEACHER",
                 teacher.getName(),
-                "Login successful"
+                "Login successful",
+                token
             );
         }
         return null;

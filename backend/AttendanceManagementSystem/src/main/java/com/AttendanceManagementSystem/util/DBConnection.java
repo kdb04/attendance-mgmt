@@ -24,10 +24,17 @@ public class DBConnection {
 
     private DataSource createDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
+
+        String host = System.getenv("DB_HOST");
+        String port = System.getenv("DB_PORT");
+        String dbName = System.getenv("DB_NAME");
+        String username = System.getenv("DB_USER");
+        String password = System.getenv("DB_PASSWORD");
+
 		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-		dataSource.setUrl("jdbc:mysql://localhost:3306/ooad");
-        dataSource.setUsername("root");
-        dataSource.setPassword("Nikhil1234#");
+		dataSource.setUrl("jdbc:mysql://" + host + ":" + port + "/" + dbName);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
         return dataSource;
     }
 

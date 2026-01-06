@@ -5,12 +5,12 @@ import org.springframework.web.bind.annotation.*;
 import com.AttendanceManagementSystem.model.LoginRequest;
 import com.AttendanceManagementSystem.model.LoginResponse;
 import com.AttendanceManagementSystem.facade.LoginFacade;
+import com.AttendanceManagementSystem.util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -27,25 +27,37 @@ public class AuthController {
         String username = request.getUsername();
         LoginResponse response = null;
 
+        //logger.info("AuthController.login() hit");
+        //logger.info("Username = {}", request.getUsername());
+
         // Using facade to handle different types of login
         if ("admin".equals(username)) {
             response = loginFacade.adminLogin(username, request.getPassword());
-        } 
-        else if (username.startsWith("PES")) {
+        } else if (username.startsWith("PES")) {
             response = loginFacade.studentLogin(username);
-        } 
-        else if (username.startsWith("TRN")) {
+        } else if (username.startsWith("TRN")) {
             response = loginFacade.teacherLogin(username);
         }
 
         if (response != null) {
-            logger.info("Login successful for user: {}", username);
-            return ResponseEntity.ok(response);
+            String token = JwtUtil.generateToken(response.getUserId(), response.getRole(), response.getName());
+
+            //logger.info("JWT generated for user {}", username);
+
+            return ResponseEntity.ok(
+                new LoginResponse(
+                    response.getUserId(),
+                    response.getRole(),
+                    response.getName(),
+                    "Login successful",
+                    token
+                )
+            );
         }
 
         logger.error("Login failed for username: {}", username);
         return ResponseEntity.badRequest().body(new LoginResponse(
-            null, null, null, "Invalid credentials"
+            null, null, null, "Invalid credentials", null
         ));
     }
 }

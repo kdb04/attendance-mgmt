@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from './services/api'
-import './StudentDashboard.css' // We can reuse the same CSS
-import './TeacherDashboard.css' // Add this new CSS file for teacher-specific styles
+import './StudentDashboard.css' 
+import './TeacherDashboard.css' 
 
 function TeacherDashboard({ trn }) {
     const [courses, setCourses] = useState([])

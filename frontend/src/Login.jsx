@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import loginStyles from "./login.module.css"
+import api from './services/api';
 
 // Text Scramble class
 class TextScramble {
@@ -115,15 +115,10 @@ function Login() {
         }
         setLoading(true);
         try {
-            console.log('Sending request to:', 'http://localhost:8080/api/auth/login');
-            const response = await axios.post('http://localhost:8080/api/auth/login', formData, {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                withCredentials: true
-            });
+            const response = await api.post('/auth/login', formData);
             
             // Store auth data
+            localStorage.setItem('token', response.data.token);
             localStorage.setItem('userId', response.data.userId);
             localStorage.setItem('role', response.data.role);
             localStorage.setItem('name', response.data.name);
