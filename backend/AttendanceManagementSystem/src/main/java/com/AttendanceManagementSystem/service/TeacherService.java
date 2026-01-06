@@ -3,6 +3,7 @@ package com.AttendanceManagementSystem.service;
 import com.AttendanceManagementSystem.model.Course;
 import com.AttendanceManagementSystem.model.Teacher;
 import com.AttendanceManagementSystem.repository.TeacherRepository;
+import com.AttendanceManagementSystem.util.PasswordUtil;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -82,5 +83,19 @@ public class TeacherService {
             courseCode
         );
         return rowsAffected > 0;
+    }
+
+    public boolean authenticateTeacher(String trn, String password){
+        String storedHash = teacherRepository.getPasswordHash(trn);
+
+        //first login
+        if (storedHash == null){
+            String hash = PasswordUtil.hashPassword(password);
+            teacherRepository.updatePasword(trn, hash);
+            return true;
+        }
+
+        //normal login
+        return PasswordUtil.verifyPassword(password, storedHash);
     }
 }

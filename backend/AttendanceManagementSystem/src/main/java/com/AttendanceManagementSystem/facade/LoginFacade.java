@@ -4,6 +4,6 @@ import com.AttendanceManagementSystem.model.LoginResponse;
 
 public interface LoginFacade {
     LoginResponse adminLogin(String username, String password);
-    LoginResponse studentLogin(String username);
-    LoginResponse teacherLogin(String username);
+    LoginResponse studentLogin(String username, String password);
+    LoginResponse teacherLogin(String username, String password);
 }

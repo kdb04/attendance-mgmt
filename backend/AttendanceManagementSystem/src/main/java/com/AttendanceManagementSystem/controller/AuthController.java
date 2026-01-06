@@ -37,9 +37,9 @@ public class AuthController {
         if ("admin".equals(username)) {
             response = loginFacade.adminLogin(username, request.getPassword());
         } else if (username.startsWith("PES")) {
-            response = loginFacade.studentLogin(username);
+            response = loginFacade.studentLogin(username, request.getPassword());
         } else if (username.startsWith("TRN")) {
-            response = loginFacade.teacherLogin(username);
+            response = loginFacade.teacherLogin(username, request.getPassword());
         }
 
         if (response != null) {

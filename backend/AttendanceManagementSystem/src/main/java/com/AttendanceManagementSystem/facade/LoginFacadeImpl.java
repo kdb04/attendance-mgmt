@@ -33,9 +33,13 @@ public class LoginFacadeImpl implements LoginFacade {
     }
 
     @Override
-    public LoginResponse studentLogin(String username) {
+    public LoginResponse studentLogin(String username, String password) {
         Student student = studentService.getStudentById(username);
-        if (student != null) {
+
+        boolean ok = studentService.authenticateStudent(username, password);
+        if(!ok) return null;
+
+        if (student != null && ok) {
             return new LoginResponse(
                 username,
                 "STUDENT",
@@ -48,9 +52,13 @@ public class LoginFacadeImpl implements LoginFacade {
     }
 
     @Override
-    public LoginResponse teacherLogin(String username) {
+    public LoginResponse teacherLogin(String username, String password) {
         Teacher teacher = teacherService.getTeacherByTRN(username);
-        if (teacher != null) {
+
+        boolean ok = teacherService.authenticateTeacher(username, password);
+        if(!ok) return null;
+        
+        if (teacher != null && ok) {
             return new LoginResponse(
                 username,
                 "TEACHER",

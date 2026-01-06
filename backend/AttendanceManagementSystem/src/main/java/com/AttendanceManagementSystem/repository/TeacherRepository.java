@@ -49,4 +49,14 @@ public class TeacherRepository {
         String sql = "DELETE FROM Teachers WHERE trn = ?";
         return jdbcTemplate.update(sql, trn);
     }
+
+    public String getPasswordHash(String trn){
+        String sql = "SELECT password FROM Teachers WHERE trn = ?";
+        return jdbcTemplate.queryForObject(sql, String.class, trn);
+    }
+
+    public void updatePasword(String trn, String passwordHash){
+        String sql = "UPDATE Teachers SET password = ? WHERE trn = ?";
+        jdbcTemplate.update(sql, passwordHash, trn);
+    }
 }

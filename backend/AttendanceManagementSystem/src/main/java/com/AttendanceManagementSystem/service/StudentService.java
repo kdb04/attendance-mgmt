@@ -4,6 +4,8 @@ import com.AttendanceManagementSystem.model.Student;
 import com.AttendanceManagementSystem.model.Course;
 import com.AttendanceManagementSystem.repository.StudentRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
+import com.AttendanceManagementSystem.util.PasswordUtil;
+
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
@@ -116,5 +118,19 @@ public class StudentService {
         """;
 
         return jdbcTemplate.queryForMap(sql, courseCode, courseCode, srn, courseCode);
+    }
+
+    public boolean authenticateStudent(String srn, String password){
+        String storedHash = studentRepository.getPasswordHash(srn);
+        
+        //first login
+        if (storedHash == null){
+            String hash = PasswordUtil.hashPassword(password);
+            studentRepository.updatePasword(srn, hash);
+            return true;
+        }
+
+        //normal login
+        return PasswordUtil.verifyPassword(password, storedHash);
     }
 }
