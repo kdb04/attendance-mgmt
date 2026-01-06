@@ -14,10 +14,13 @@ import org.slf4j.LoggerFactory;
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    
     private final LoginFacade loginFacade;
+    private final JwtUtil jwtUtil;
 
-    public AuthController(LoginFacade loginFacade) {
+    public AuthController(LoginFacade loginFacade, JwtUtil jwtUtil) {
         this.loginFacade = loginFacade;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/login")
@@ -40,7 +43,7 @@ public class AuthController {
         }
 
         if (response != null) {
-            String token = JwtUtil.generateToken(response.getUserId(), response.getRole(), response.getName());
+            String token = jwtUtil.generateToken(response.getUserId(), response.getRole(), response.getName());
 
             //logger.info("JWT generated for user {}", username);
 

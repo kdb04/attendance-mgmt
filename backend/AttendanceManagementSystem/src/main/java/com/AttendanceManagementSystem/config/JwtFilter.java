@@ -10,6 +10,12 @@ import java.io.IOException;
 @Component
 public class JwtFilter implements Filter {
 
+    private final JwtUtil jwtUtil;
+
+    public JwtFilter(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
+
     @Override
     public void doFilter(
         ServletRequest req,
@@ -24,13 +30,7 @@ public class JwtFilter implements Filter {
 
         //System.out.println("JwtFilter path = " + path);
 
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            chain.doFilter(req, res);
-            return;
-        }   
-
-        // Allow auth endpoint
-        if (path.startsWith("/api/auth")) {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod()) || path.startsWith("/api/auth")) {
             chain.doFilter(req, res);
             return;
         }
@@ -39,23 +39,47 @@ public class JwtFilter implements Filter {
         //System.out.println("Authorization header = " + authHeader);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            sendError(response, 401, "Missing or invalid Authorization header");
             return;
         }
 
         try {
             String token = authHeader.substring(7);
-            Claims claims = JwtUtil.validateToken(token);
+            Claims claims = jwtUtil.validateToken(token);
 
-            //Admin-only protection 
-            if (path.startsWith("/api/admin") && !"ADMIN".equals(claims.get("role"))) {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getWriter().write("Unauthorized - JWT missing or invalid");
+            String role = claims.get("role", String.class);
+            String userId = claims.getSubject();
+
+            //Admin full access
+            if("ADMIN".equals(role)) {
+                chain.doFilter(req, res);
                 return;
             }
 
-            request.setAttribute("userId", claims.getSubject());
-            request.setAttribute("role", claims.get("role"));
+            //Student-only access
+            if (path.startsWith("/api/students")){
+                if (!"STUDENT".equals(role) || !path.contains("/" + userId + "/")) {
+                    sendError(response, 403, "Students can only access their own data");
+                    return;
+                }
+            }
+
+            //Teacher-only access
+            if (path.startsWith("/api/teachers")){
+                if (!"TEACHER".equals(role) || !path.contains("/" + userId + "/")) {
+                    sendError(response, 403, "Teachers can only access their own data");
+                    return;
+                }
+            }
+
+            //Admin-only routes
+            if (path.startsWith("/api/admin")) {
+                sendError(response, 403, "Admin access required");
+                return;
+            }          
+
+            request.setAttribute("userId", userId);
+            request.setAttribute("role", role);
 
             //System.out.println("JWT FILTER HIT");
             //System.out.println("Path: " + path);
@@ -63,10 +87,26 @@ public class JwtFilter implements Filter {
             //System.out.println("Role: " + claims.get("role"));
 
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            sendError(response, 401, "Invalid or expired JWT token");
             return;
         }
 
         chain.doFilter(req, res);
+    }
+
+    private void sendError(
+        HttpServletResponse response,
+        int status,
+        String message
+    ) throws IOException {
+
+        response.setStatus(status);
+        response.setContentType("application/json");
+        response.getWriter().write("""
+            {
+                "error": "%s",
+                "status": %d
+            }
+        """.formatted(message, status));
     }
 }

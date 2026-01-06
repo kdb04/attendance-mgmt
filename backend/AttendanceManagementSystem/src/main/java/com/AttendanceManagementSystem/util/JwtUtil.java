@@ -12,29 +12,33 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
-    private static String SECRET;
-    private static long EXPIRATION_TIME;
-    private static Key SECRET_KEY;
+    private final Key secretKey;
+    private final long expirationTime;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration}") long expiration) {
-        SECRET = secret;
-        EXPIRATION_TIME = expiration;
-        SECRET_KEY = Keys.hmacShaKeyFor(SECRET.getBytes());
+    public JwtUtil(
+        @Value("${jwt.secret}") String secret, 
+        @Value("${jwt.expiration}") long expiration
+    ) {
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
+        this.expirationTime = expiration;
     }
 
-    public static String generateToken(String userId, String role, String name){
+    public String generateToken(String userId, String role, String name){
         return Jwts.builder()
+            .setClaims(Map.of(
+                "role", role, 
+                "name", name
+            ))
             .setSubject(userId)
-            .setClaims(Map.of("role", role, "name", name))
             .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-            .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+            .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+            .signWith(secretKey, SignatureAlgorithm.HS256)
             .compact();
     }
 
-    public static Claims validateToken(String token){
+    public Claims validateToken(String token){
         return Jwts.parserBuilder()
-            .setSigningKey(SECRET_KEY)
+            .setSigningKey(secretKey)
             .build()
             .parseClaimsJws(token)
             .getBody();
