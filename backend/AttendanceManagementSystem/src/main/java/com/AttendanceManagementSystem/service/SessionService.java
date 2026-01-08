@@ -85,20 +85,22 @@ public class SessionService {
     }
 
     public void updateAttendance(AttendanceRecord record) {
-        String sql =
-            """
-                UPDATE Attendance
-                SET status = ?, timestamp = NOW()
-                WHERE session_id = ? AND srn = ?
-            """;
+        String sql = """
+            INSERT INTO Attendance (session_id, srn, status, timestamp)
+            VALUES (?, ?, ?, NOW())
+            ON DUPLICATE KEY UPDATE
+            status = VALUES(status),
+            timestamp = NOW()
+        """;
 
         jdbcTemplate.update(
             sql,
-            record.getStatus(),
             record.getSessionId(),
-            record.getSrn()
+            record.getSrn(),
+            record.getStatus()
         );
     }
+
 
     private final RowMapper<ClassSession> sessionRowMapper = (rs, rowNum) ->
         new ClassSession(

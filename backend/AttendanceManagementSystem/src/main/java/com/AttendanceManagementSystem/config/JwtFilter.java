@@ -27,10 +27,11 @@ public class JwtFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
 
         String path = request.getRequestURI();
+        String method = request.getMethod();
 
         //System.out.println("JwtFilter path = " + path);
 
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod()) || path.startsWith("/api/auth")) {
+        if ("OPTIONS".equalsIgnoreCase(method) || path.startsWith("/api/auth") || path.startsWith("/api/test")) {
             chain.doFilter(req, res);
             return;
         }
@@ -50,7 +51,7 @@ public class JwtFilter implements Filter {
             String role = claims.get("role", String.class);
             String userId = claims.getSubject();
 
-            //Admin full access
+            //Admin has access to everything
             if("ADMIN".equals(role)) {
                 chain.doFilter(req, res);
                 return;
@@ -58,7 +59,16 @@ public class JwtFilter implements Filter {
 
             //Student-only access
             if (path.startsWith("/api/students")){
-                if (!"STUDENT".equals(role) || !path.contains("/" + userId + "/")) {
+                if (!"STUDENT".equals(role)) {
+                    sendError(response, 403, "Students access required");
+                    return;
+                }
+
+                String base = "/api/students/";
+                String remainingPath = path.substring(base.length());
+                String requestedId = remainingPath.split("/")[0];
+
+                if(!requestedId.equals(userId)) {
                     sendError(response, 403, "Students can only access their own data");
                     return;
                 }
@@ -66,17 +76,59 @@ public class JwtFilter implements Filter {
 
             //Teacher-only access
             if (path.startsWith("/api/teachers")){
-                if (!"TEACHER".equals(role) || !path.contains("/" + userId + "/")) {
+                if (!"TEACHER".equals(role)) {
+                    sendError(response, 403, "Teachers access required");
+                    return;
+                }
+
+                String base = "/api/teachers/";
+                String remainingPath = path.substring(base.length());
+                String requestedId = remainingPath.split("/")[0];
+
+                if(!requestedId.equals(userId)) {
                     sendError(response, 403, "Teachers can only access their own data");
                     return;
                 }
             }
 
-            //Admin-only routes
+            //Courses - all have access
+            if (path.startsWith("/api/courses")){
+                //Anyone logged in can access courses
+                if("GET".equalsIgnoreCase(method)){
+                    chain.doFilter(req, res);
+                    return;
+                }
+                //Only Admin can modify courses
+                if(!"ADMIN".equals(role)){
+                    sendError(response, 403, "Admin access required to modify courses");
+                    return;
+                }
+            }
+
+            //Sessions - teacher and admin access
+            if (path.startsWith("/api/sessions/course")){
+                if(!"ADMIN".equals(role) && !"TEACHER".equals(role)) {
+                    sendError(response, 403, "Teacher or Admin access required");
+                    return;
+                }
+
+                //api/sessions/course/{coursecode}/teacher/{trn}
+                String parts[] = path.split("/");
+                String trn = parts[parts.length - 1];
+
+                if(!trn.equalsIgnoreCase(userId)){
+                    sendError(response, 403, "Teachers can only access their own sessions");
+                    return;
+                }
+            }
+
+            //Admin-only access
             if (path.startsWith("/api/admin")) {
-                sendError(response, 403, "Admin access required");
-                return;
-            }          
+                if (!"ADMIN".equals(role)) {
+                    sendError(response, 403, "Admin access required");
+                    return;
+                }
+            }
 
             request.setAttribute("userId", userId);
             request.setAttribute("role", role);
