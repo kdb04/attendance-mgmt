@@ -3,6 +3,7 @@ package com.AttendanceManagementSystem.service;
 import com.AttendanceManagementSystem.model.Student;
 import com.AttendanceManagementSystem.model.Course;
 import com.AttendanceManagementSystem.repository.StudentRepository;
+import com.AttendanceManagementSystem.repository.EnrollmentRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import com.AttendanceManagementSystem.util.PasswordUtil;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class StudentService {
 
     private final StudentRepository studentRepository;
+    private final EnrollmentRepository enrollmentRepository;
     private final JdbcTemplate jdbcTemplate;
 
     private final RowMapper<Course> courseRowMapper = (rs, rowNum) ->
@@ -26,8 +28,9 @@ public class StudentService {
             rs.getInt("credits")
         );
 
-    public StudentService(StudentRepository studentRepository, JdbcTemplate jdbcTemplate) { //dependency injection
+    public StudentService(StudentRepository studentRepository, EnrollmentRepository enrollmentRepository, JdbcTemplate jdbcTemplate) { //dependency injection
         this.studentRepository = studentRepository;
+        this.enrollmentRepository = enrollmentRepository;
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -118,6 +121,11 @@ public class StudentService {
         """;
 
         return jdbcTemplate.queryForMap(sql, courseCode, courseCode, srn, courseCode);
+    }
+
+    public void enrollStudentToCourse(String srn, String courseCode) {
+        if (enrollmentRepository.isAlreadyEnrolled(srn, courseCode)) throw new IllegalStateException("Student already enrolled in this course");
+        enrollmentRepository.enrollStudent(srn, courseCode);
     }
 
     public boolean authenticateStudent(String srn, String password){

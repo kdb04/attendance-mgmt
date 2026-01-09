@@ -29,13 +29,20 @@ function AdminDashboard() {
         courseCode: ''
     });
 
+    const [enrollmentData, setEnrollmentData] = useState({
+        srn: '',
+        courseCode: ''
+    });
+
     const [teachers, setTeachers] = useState([]);
     const [courses, setCourses] = useState([]);
+    const [students, setStudents] = useState([]);
+
     const [fetchingData, setFetchingData] = useState(false);
 
-    // Fetch teachers and courses when allocation tab is selected
+    // Fetch teachers and courses when allocation/enrollement tab is selected
     useEffect(() => {
-        if (activeTab === 'allocations') {
+        if (activeTab === 'allocations' || activeTab === 'enrollments') {
             fetchTeachersAndCourses();
         }
     }, [activeTab]);
@@ -43,12 +50,14 @@ function AdminDashboard() {
     const fetchTeachersAndCourses = async () => {
         setFetchingData(true);
         try {
-            const [teachersResponse, coursesResponse] = await Promise.all([
+            const [teachersResponse, coursesResponse, studentResponse] = await Promise.all([
                 api.get('/teachers'),
-                api.get('/courses')
+                api.get('/courses'),
+                api.get('/students')
             ]);
             setTeachers(teachersResponse.data);
             setCourses(coursesResponse.data);
+            setStudents(studentResponse.data);
         } catch (err) {
             console.error('Failed to fetch data:', err);
             setMessage({ type: 'error', text: 'Failed to load teachers or courses' });
@@ -113,6 +122,20 @@ function AdminDashboard() {
         }
     };
 
+    const handleEnrollmentSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            await api.post('/admin/student-enrollments', enrollmentData);
+            setMessage({ type: 'success', text: 'Student enrolled successfully' });
+            setEnrollmentData({ srn: '', courseCode: '' });
+        } catch (err) {
+            setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to enroll student' });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="admin-dashboard">
             <div className="admin-tabs">
@@ -139,6 +162,12 @@ function AdminDashboard() {
                     onClick={() => setActiveTab('allocations')}
                 >
                     Allocate Courses
+                </button>
+                <button 
+                    className={activeTab === 'enrollments' ? 'active' : ''} 
+                    onClick={() => setActiveTab('enrollments')}
+                >
+                    Enroll Student
                 </button>
             </div>
 
@@ -311,6 +340,61 @@ function AdminDashboard() {
                         )}
                     </form>
                 )}
+
+                {activeTab === 'enrollments' && (
+                    <form onSubmit={handleEnrollmentSubmit} className="admin-form">
+                        <h3>Enroll Student to Course</h3>
+
+                        {fetchingData ? (
+                            <div className="loading">Loading data...</div>
+                        ) : (
+                            <>
+                                <div className="form-group">
+                                    <label>Select Student:</label>
+                                    <select
+                                        value={enrollmentData.srn}
+                                        onChange={e => setEnrollmentData({
+                                            ...enrollmentData,
+                                            srn: e.target.value
+                                        })}
+                                        required
+                                    >
+                                        <option value="">Select a student</option>
+                                        {students.map(student => (
+                                            <option key={student.srn} value={student.srn}>
+                                                {student.name} ({student.srn})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Select Course:</label>
+                                    <select
+                                        value={enrollmentData.courseCode}
+                                        onChange={e => setEnrollmentData({
+                                            ...enrollmentData,
+                                            courseCode: e.target.value
+                                        })}
+                                        required
+                                    >
+                                        <option value="">Select a course</option>
+                                        {courses.map(course => (
+                                            <option key={course.courseCode} value={course.courseCode}>
+                                                {course.courseName} ({course.courseCode})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                
+                                <button type="submit" disabled={loading}>
+                                    {loading ? 'Enrolling...' : 'Enroll Student'}
+                                </button>
+                            </>
+                        )}
+                    </form>
+                )}
+
             </div>
         </div>
     );

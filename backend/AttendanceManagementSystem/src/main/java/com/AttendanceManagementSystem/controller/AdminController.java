@@ -108,4 +108,30 @@ public class AdminController {
             return ResponseEntity.badRequest().body("Error assigning course to teacher: " + e.getMessage());
         }
     }
+
+    @PostMapping("/student-enrollments")
+    public ResponseEntity<String> enrollStudentToCourse(@RequestBody Map<String, String> payload) {
+        try {
+            String srn = payload.get("srn");
+            String courseCode = payload.get("courseCode");
+
+            Student student = studentService.getStudentById(srn);
+            Course course = courseService.getCourseByCode(courseCode);
+
+            if (student == null) {
+                return ResponseEntity.badRequest().body("Student not found");
+            }
+            if (course == null) {
+                return ResponseEntity.badRequest().body("Course not found");
+            }
+
+            studentService.enrollStudentToCourse(srn, courseCode);
+            return ResponseEntity.ok("Student enrolled successfully");
+
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Enrollment failed: " + e.getMessage());
+        }
+    }
 }
