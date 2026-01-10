@@ -4,16 +4,21 @@ import com.AttendanceManagementSystem.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 
 @Component
 public class JwtFilter implements Filter {
 
     private final JwtUtil jwtUtil;
+    private final String frontendOrigin;
 
-    public JwtFilter(JwtUtil jwtUtil) {
+    public JwtFilter(JwtUtil jwtUtil, @Value("${FRONTEND_ORIGIN}") String frontendOrigin) {
         this.jwtUtil = jwtUtil;
+        this.frontendOrigin = frontendOrigin;
     }
 
     @Override
@@ -25,6 +30,11 @@ public class JwtFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
+
+        response.setHeader("Access-Control-Allow-Origin", frontendOrigin);
+        response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "*");
+        response.setHeader("Access-Control-Max-Age", "3600");
 
         String path = request.getRequestURI();
         String method = request.getMethod();
@@ -151,6 +161,10 @@ public class JwtFilter implements Filter {
         int status,
         String message
     ) throws IOException {
+
+        response.setHeader("Access-Control-Allow-Origin", frontendOrigin);
+        response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "Authorization,Content-Type");
 
         response.setStatus(status);
         response.setContentType("application/json");
