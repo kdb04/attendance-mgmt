@@ -69,7 +69,6 @@ public class TeacherService {
             """
                 INSERT INTO TeacherAssignments (trn, course_code)
                 SELECT ?, ?
-                FROM dual
                 WHERE NOT EXISTS (
                     SELECT 1 FROM TeacherAssignments WHERE trn = ? AND course_code = ?
                 )
@@ -95,7 +94,7 @@ public class TeacherService {
             return true;
         }
 
-        //normal login
+        //normal logins
         return PasswordUtil.verifyPassword(password, storedHash);
     }
 }

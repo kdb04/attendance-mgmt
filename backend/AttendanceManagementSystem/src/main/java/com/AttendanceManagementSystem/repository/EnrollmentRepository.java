@@ -16,7 +16,7 @@ public class EnrollmentRepository {
     public int enrollStudent(String srn, String courseCode) {
         String sql = """
             INSERT INTO StudentEnrollments (srn, course_code, enrollment_date)
-            VALUES (?, ?, CURDATE())
+            VALUES (?, ?, CURRENT_DATE)
         """;
         return jdbcTemplate.update(sql, srn, courseCode);
     }

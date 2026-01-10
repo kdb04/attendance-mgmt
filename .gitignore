@@ -192,4 +192,8 @@ frontend/dist/
 #env files
 backend/**/.env
 
+#mysql data
+mysql_data.sql
+render_stuff.txt
+schema.sql
 

@@ -85,12 +85,14 @@ public class SessionService {
     }
 
     public void updateAttendance(AttendanceRecord record) {
-        String sql = """
+        String sql = 
+        """
             INSERT INTO Attendance (session_id, srn, status, timestamp)
             VALUES (?, ?, ?, NOW())
-            ON DUPLICATE KEY UPDATE
-            status = VALUES(status),
-            timestamp = NOW()
+            ON CONFLICT (session_id, srn)
+            DO UPDATE SET
+                status = EXCLUDED.status,
+                timestamp = NOW()
         """;
 
         jdbcTemplate.update(

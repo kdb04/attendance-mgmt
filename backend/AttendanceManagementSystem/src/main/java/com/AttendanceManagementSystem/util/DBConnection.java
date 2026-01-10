@@ -31,8 +31,8 @@ public class DBConnection {
         String username = System.getenv("DB_USER");
         String password = System.getenv("DB_PASSWORD");
 
-		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-		dataSource.setUrl("jdbc:mysql://" + host + ":" + port + "/" + dbName);
+		dataSource.setDriverClassName("org.postgresql.Driver");
+		dataSource.setUrl("jdbc:postgresql://" + host + ":" + port + "/" + dbName);
         dataSource.setUsername(username);
         dataSource.setPassword(password);
         return dataSource;
