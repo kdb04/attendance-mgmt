@@ -7,17 +7,38 @@ A comprehensive system for tracking and managing attendance in educational insti
 This project is a full-stack attendance management application built with:
 - **Backend**: Java Spring Boot API
 - **Frontend**: React.js with modern UI components
-- **Database**: MySQL
+- **Database**: PostgreSQL
+- **Deployment**: Dockerized backend on Render, frontend on Vercel
 
-The system is designed with clean architecture principles, implementing design patterns like Factory Method, Repository, and Facade to ensure maintainability and scalability.
+The system is designed with clean architecture principles, implementing design patterns like Factory, Facade, Strategy, Repository and Singleton methods to ensure maintainability and scalability.
+
+## Live Demo
+**Backend Server(Render)**
+- Health Check: ```bash https://attendance-backend-zpio.onrender.com/api/test```
+(Hosted on Render Free-Tier, can take upto 30s-1min to start-up)
+
+**Frontend (Vercel)**
+- Live UI: ```bash https://attendance-mgmt-mu.vercel.app```
+
+**Test Credentials**
+- **Student**: SRN - PES2UG22CS001, Password - test
+- **Teacher**: TRN - TRN042, Password - test
 
 ## Features
+
+### Authentication & Security
+- JWT-based authentication
+- Role-based access control(Admin/Student/Teacher)
+- Secure route protection using a custom JWT filter
+- Passwords created on first login, stored as hash and compared for subsequent logins
+- Stateless backend
 
 ### Administrator Features
 - Add, update, and manage student records
 - Add, update, and manage teacher records
 - Create and manage course information
 - Allocate courses to teachers
+- Enroll students to courses
 
 ### Teacher Features
 - View assigned courses
@@ -36,6 +57,7 @@ The system is designed with clean architecture principles, implementing design p
 - Java Spring Boot
 - JDBC for database connectivity
 - RESTful API architecture
+- JWT for Authentication & RBAC
 - SQL query optimization for attendance statistics
 
 ### Frontend
@@ -45,45 +67,9 @@ The system is designed with clean architecture principles, implementing design p
 - API integration using Axios
 
 ### Database
-- MySQL with efficient schema design
-- Triggers for automated attendance tracking
-- Foreign key constraints for data integrity
-
-## Getting Started
-
-### Pre-requisites
-- Java 17 or newer
-- Maven
-- Node.js and npm
-- MySQL Server
-
-### Running the Backend
-```bash
-cd backend/AttendanceManagementSystem
-mvn spring-boot:run
-```
-This will start the Spring Boot server at `http://localhost:8080`
-
-### Running the Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-This will start the development server at `http://localhost:5173`
-
-### Database Configuration
-Database connection parameters can be configured in:
-```
-backend/AttendanceManagementSystem/src/main/resources/application.properties
-backend/AttendanceManagementSystem/src/main/java/com/AttendanceManagementSystem/util/DBConnection.java
-```
-
-## User Authentication
-
-- **Admin**: Username: `admin`, Password: `admin123#`
-- **Students**: Use SRN format `PES2UG22CS123`, Password: `any` (follows pattern validation)
-- **Teachers**: Use TRN format `TRN123`, Password: `any` (follows pattern validation)
+- PostgreSQL with efficient schema design
+- Triggers & constraints for automation & integrity
+- Optimized SQL queries for attendance analytics
 
 ## Project Structure
 
