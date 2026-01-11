@@ -2,6 +2,8 @@
 
 A comprehensive system for tracking and managing attendance in educational institutions, including features for students, teachers, and administrators.
 
+---
+
 ## Overview
 
 This project is a full-stack attendance management application built with:
@@ -12,17 +14,21 @@ This project is a full-stack attendance management application built with:
 
 The system is designed with clean architecture principles, implementing design patterns like Factory, Facade, Strategy, Repository and Singleton methods to ensure maintainability and scalability.
 
+---
+
 ## Live Demo
 **Backend Server(Render)**
-- Health Check: ```bash https://attendance-backend-zpio.onrender.com/api/test```
+- **Health Check**: ```https://attendance-backend-zpio.onrender.com/api/test```
 (Hosted on Render Free-Tier, can take upto 30s-1min to start-up)
 
 **Frontend (Vercel)**
-- Live UI: ```bash https://attendance-mgmt-mu.vercel.app```
+- **Live UI**: ```https://attendance-mgmt-mu.vercel.app```
 
 **Test Credentials**
 - **Student**: SRN - PES2UG22CS001, Password - test
 - **Teacher**: TRN - TRN042, Password - test
+
+---
 
 ## Features
 
@@ -51,6 +57,8 @@ The system is designed with clean architecture principles, implementing design p
 - Check attendance statistics and current status
 - Track attendance requirements and shortfalls
 
+---
+
 ## Tech Stack
 
 ### Backend
@@ -71,6 +79,8 @@ The system is designed with clean architecture principles, implementing design p
 - Triggers & constraints for automation & integrity
 - Optimized SQL queries for attendance analytics
 
+---
+
 ## Project Structure
 
 ### Backend Components
@@ -87,9 +97,13 @@ The system is designed with clean architecture principles, implementing design p
 - **Tables** for data display
 - **Stats components** for attendance visualization
 
+---
+
 ## License 
 
 MIT — Use it, Build on it and Make it Great Again.
+
+---
 
 ## Contributors
 
