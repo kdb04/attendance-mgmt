@@ -196,4 +196,7 @@ backend/**/.env
 mysql_data.sql
 render_stuff.txt
 schema.sql
+attendance_dump.sql
 
+*.md 
+!README.md
