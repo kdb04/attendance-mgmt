@@ -197,6 +197,8 @@ mysql_data.sql
 render_stuff.txt
 schema.sql
 attendance_dump.sql
+schema_new.sql
+attendance_dump_new.sql
 
 *.md 
 !README.md

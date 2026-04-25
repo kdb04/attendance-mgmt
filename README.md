@@ -18,15 +18,15 @@ The system is designed with clean architecture principles, implementing design p
 
 ## Live Demo
 **Backend Server(Render)**
-- **Health Check**: ```https://attendance-backend-zpio.onrender.com/api/test```
+- **Health Check**: [https://attendance-backend-zpio.onrender.com/api/test](https://attendance-backend-zpio.onrender.com/api/test)
 (Hosted on Render Free-Tier, can take upto 30s-1min to start-up)
 
 **Frontend (Vercel)**
-- **Live UI**: ```https://attendance-mgmt-mu.vercel.app```
+- **Live UI**: [https://attendance-mgmt-mu.vercel.app](https://attendance-mgmt-mu.vercel.app)
 
 **Test Credentials**
-- **Student**: SRN - PES2UG22CS001, Password - test
-- **Teacher**: TRN - TRN042, Password - test
+- **Student**: ```SRN - PES2UG22CS001, Password - test```
+- **Teacher**:  ```TRN - TRN042, Password - test```
 
 ---
 
@@ -107,7 +107,7 @@ MIT — Use it, Build on it and Make it Great Again.
 
 ## Contributors
 
-- Motamarri Sai Sathvik: http://github.com/User-LazySloth
-- Narayan Sreekumar: https://github.com/vortex73
-- Nikhil Srivatsa : https://github.com/kdb04
-- Nitheesh Pugazhanthi : https://github.com/noth2006
+- Motamarri Sai Sathvik: [http://github.com/User-LazySloth](http://github.com/User-LazySloth)
+- Narayan Sreekumar: [http://github.com/vortex73](https://github.com/vortex73)
+- Nikhil Srivatsa : [http://github.com/kdb04](https://github.com/kdb04)
+- Nitheesh Pugazhanthi : [http://github.com/noth2006](https://github.com/noth2006)
